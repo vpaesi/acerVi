@@ -24,13 +24,6 @@ public class LivroController {
     @Autowired
     private LivroService livroService;
 
-    // Endpoints:
-    // POST /livros - Criar um livro. check
-    // GET /livros - Listar todos os livros. check
-    // GET /livros/{id} - Buscar um livro pelo ID. check
-    // PUT /livros/{id} - Editar um livro. check
-    // DELETE /livros/{id} - Excluir um livro. check
-    
     @Operation(summary = "Criar um novo livro")
     @PostMapping
     public Livro criarLivro(@RequestBody Livro livro) {

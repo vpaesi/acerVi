@@ -9,13 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acervi.backend.model.AssuntoTopico;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
-@RequestMapping("/api/enum")
+@RequestMapping("/api/650")
 public class AssuntoTopicoController {
     
-    @GetMapping("/650")
+    @Operation(summary = "Listar todos os tópicos de assunto disponíveis")
+    @GetMapping()
     public List<AssuntoTopico> getAssuntoTopico() {
         return Arrays.asList(AssuntoTopico.values());
     }
-
 }
