@@ -7,6 +7,4 @@ import com.acervi.backend.model.Livro;
 
 @Repository
 public interface LivroRepository extends JpaRepository<Livro, Long> {
-
-    
 }

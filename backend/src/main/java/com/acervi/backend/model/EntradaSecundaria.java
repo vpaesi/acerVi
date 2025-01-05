@@ -1,9 +1,16 @@
 package com.acervi.backend.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class EntradaSecundaria {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String marc700NomePessoalEntidade;
     private String marc700OrgEdCordComp;
@@ -26,5 +33,11 @@ public class EntradaSecundaria {
     }
     public void setMarc710EntidadeUnidadeSubordinada(String marc710EntidadeUnidadeSubordinada) {
         this.marc710EntidadeUnidadeSubordinada = marc710EntidadeUnidadeSubordinada;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 }

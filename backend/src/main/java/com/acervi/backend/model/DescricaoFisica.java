@@ -37,5 +37,7 @@ public class DescricaoFisica {
         this.marc300Volumes = marc300Volumes;
     }
 
-    
+    public String getMarc300DescricaoFisica() {
+        return marc300Páginas + ", " + marc300Volumes + " volumes";
+    }
 }

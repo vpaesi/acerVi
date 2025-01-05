@@ -1,7 +1,10 @@
 package com.acervi.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Livro {
@@ -10,16 +13,18 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cdu_id")
     private CDU cdu;
 
+    @NotNull
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cutter_id")
     private Cutter cutter;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "esntradaPrincipal_id")
+    @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<EntradaPrincipal> entradaPrincipal = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -30,10 +35,12 @@ public class Livro {
     @JoinColumn(name = "edicao_id")
     private Edicao edicao;
 
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "distribuicao_id")
     private Distribuicao distribuicao;
 
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "descricaoFisica_id")
     private DescricaoFisica descricaoFisica;
@@ -46,12 +53,10 @@ public class Livro {
     @JoinColumn(name = "assuntoPessoa_id")
     private AssuntoPessoa assuntoPessoa;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "livro_assuntoTopico",
-        joinColumns = @JoinColumn(name = "livro_id"),
-        inverseJoinColumns = @JoinColumn(name = "assuntoTopico_id")
-    )
+    @ElementCollection(targetClass = AssuntoTopico.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "livro_assunto_topico", joinColumns = @JoinColumn(name = "livro_id"))
+    @Column(name = "assunto_topico")
+    @Enumerated(EnumType.STRING)
     private List<AssuntoTopico> assuntoTopico = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -62,7 +67,7 @@ public class Livro {
     )
     private List<EntradaSecundaria> entradaSecundaria = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "entradaSecundariaSerie_id")
     private EntradaSecundariaSerie entradaSecundariaSerie;
 
@@ -80,8 +85,8 @@ public class Livro {
 
     public void setCdu(CDU cdu) {
         this.cdu = cdu;
-    }
-
+    }   
+    
     public Cutter getCutter() {
         return cutter;
     }
@@ -169,6 +174,4 @@ public class Livro {
     public void setEntradaSecundariaSerie(EntradaSecundariaSerie entradaSecundariaSerie) {
         this.entradaSecundariaSerie = entradaSecundariaSerie;
     }
-
-    
 }
