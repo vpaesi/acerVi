@@ -13,16 +13,26 @@ import jakarta.persistence.OneToMany;
 @Entity
 public class EntradaSecundariaSerie {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String marc800TituloSerieColecao;
-
     @OneToMany(mappedBy = "entradaSecundariaSerie", cascade = CascadeType.ALL)
     private List<Livro> livros = new ArrayList<>();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String marc800TituloSerieColecao;
     private int marc800Volume;
+
+    public EntradaSecundariaSerie() {}
+
+    public EntradaSecundariaSerie(
+        Long id, 
+        String marc800TituloSerieColecao, 
+        int marc800Volume) 
+        {
+        this.id = id;
+        this.marc800TituloSerieColecao = marc800TituloSerieColecao;
+        this.marc800Volume = marc800Volume;
+    }
 
     public Long getId() {
         return id;
@@ -50,5 +60,10 @@ public class EntradaSecundariaSerie {
     }
     public String getMarc490SerieRelacionada() {
         return marc800TituloSerieColecao + " - Volume " + marc800Volume;
+    }
+
+    public EntradaSecundariaSerie get(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
     }
 }

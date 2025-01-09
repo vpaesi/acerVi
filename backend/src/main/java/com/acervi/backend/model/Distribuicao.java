@@ -11,9 +11,21 @@ public class Distribuicao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String marc260Editora;
     private int marc260Data;
+
+    public Distribuicao() {}
+
+    public Distribuicao(Long id, String marc260Editora, int marc260Data) {
+        this.id = id;
+        this.marc260Editora = marc260Editora;
+        this.marc260Data = marc260Data;
+    }
+
+    public Distribuicao(String marc260Editora, int marc260Data) {
+        this.marc260Editora = marc260Editora;
+        this.marc260Data = marc260Data;
+    }
 
     public String getMarc260Editora() {
         return marc260Editora;

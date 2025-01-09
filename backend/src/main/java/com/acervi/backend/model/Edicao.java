@@ -11,8 +11,24 @@ public class Edicao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String marc250numeroEditadaRevisada;
+
+    private String marc250Edicao;
+
+    public Edicao() {}
+
+    public Edicao(Long id, String marc250numeroEditadaRevisada) {
+        this.id = id;
+        this.marc250numeroEditadaRevisada = marc250numeroEditadaRevisada;
+    }
+
+    public String getMarc250Edicao() {
+        return marc250Edicao;
+    }
+
+    public void setMarc250Edicao(String marc250Edicao) {
+        this.marc250Edicao = marc250Edicao;
+    }
 
     public Long getId() {
         return id;
@@ -30,7 +46,4 @@ public class Edicao {
         this.marc250numeroEditadaRevisada = marc250numeroEditadaRevisada;
     }
 
-    public String getMarc250Edicao() {
-        return marc250numeroEditadaRevisada;
-    }
 }

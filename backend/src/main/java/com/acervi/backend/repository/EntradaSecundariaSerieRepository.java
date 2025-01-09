@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.acervi.backend.model.EntradaSecundariaSerie;
 
 @Repository
-public interface EntradaSecundariaSerieRepository  extends JpaRepository<EntradaSecundariaSerie, String>{
+public interface EntradaSecundariaSerieRepository extends JpaRepository<EntradaSecundariaSerie, Long> {
 }

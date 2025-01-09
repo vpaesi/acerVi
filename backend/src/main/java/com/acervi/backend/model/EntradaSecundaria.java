@@ -11,10 +11,21 @@ public class EntradaSecundaria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String marc700NomePessoalEntidade;
     private String marc700OrgEdCordComp;
     private String marc710EntidadeUnidadeSubordinada;
+
+    public EntradaSecundaria() {}
+
+    public EntradaSecundaria(
+        String marc700NomePessoalEntidade, 
+        String marc700OrgEdCordComp, 
+        String marc710EntidadeUnidadeSubordinada) 
+        {
+        this.marc700NomePessoalEntidade = marc700NomePessoalEntidade;
+        this.marc700OrgEdCordComp = marc700OrgEdCordComp;
+        this.marc710EntidadeUnidadeSubordinada = marc710EntidadeUnidadeSubordinada;
+    }
 
     public String getMarc700NomePessoalEntidade() {
         return marc700NomePessoalEntidade;

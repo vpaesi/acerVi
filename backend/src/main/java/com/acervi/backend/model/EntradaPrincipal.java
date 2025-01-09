@@ -20,12 +20,28 @@ public class EntradaPrincipal {
     @JsonBackReference
     @JoinColumn(name = "livro_id")
     private Livro livro;
-
     private String marc100NomePessoalEntidadeEventoTitulo;
     private String marc110EditidadeUnidadeSubordinada;
     private String marc111EventoNumero;
     private String marc111EventoData;
 
+    public EntradaPrincipal() {
+    }
+
+    public EntradaPrincipal(
+        Livro livro, 
+        String marc100NomePessoalEntidadeEventoTitulo, 
+        String marc110EditidadeUnidadeSubordinada, 
+        String marc111EventoNumero,
+        String marc111EventoData) 
+        {
+        this.livro = livro;
+        this.marc100NomePessoalEntidadeEventoTitulo = marc100NomePessoalEntidadeEventoTitulo;
+        this.marc110EditidadeUnidadeSubordinada = marc110EditidadeUnidadeSubordinada;
+        this.marc111EventoNumero = marc111EventoNumero;
+        this.marc111EventoData = marc111EventoData;
+    }
+    
     public String getMarc100NomePessoalEntidadeEventoTitulo() {
         return marc100NomePessoalEntidadeEventoTitulo;
     }
@@ -64,5 +80,13 @@ public class EntradaPrincipal {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Livro getLivro() {
+        return livro;
+    }
+
+    public void setLivro(Livro livro) {
+        this.livro = livro;
     }
 }

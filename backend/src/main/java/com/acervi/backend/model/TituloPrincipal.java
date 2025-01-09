@@ -11,9 +11,15 @@ public class TituloPrincipal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String marc245TituloPrincipal;
     private String marc245Subtitulo;
+
+    public TituloPrincipal() {}
+
+    public TituloPrincipal(String marc245TituloPrincipal, String marc245Subtitulo) {
+        this.marc245TituloPrincipal = marc245TituloPrincipal;
+        this.marc245Subtitulo = marc245Subtitulo;
+    }
 
     public Long getId() {
         return id;

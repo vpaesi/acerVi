@@ -11,9 +11,16 @@ public class AssuntoPessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String marc650SobrenomeAssuntoPessoa;
     private String marc650NomeAssuntoPessoa;
+
+    public AssuntoPessoa() {}
+    
+    public AssuntoPessoa(String marc650SobrenomeAssuntoPessoa, String marc650NomeAssuntoPessoa) {
+        this.marc650SobrenomeAssuntoPessoa = marc650SobrenomeAssuntoPessoa;
+        this.marc650NomeAssuntoPessoa = marc650NomeAssuntoPessoa;
+    }
+    
     public Long getId() {
         return id;
     }

@@ -11,10 +11,15 @@ public class CDU {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String codigo;
     private String descricao;
 
+    public CDU() {}
+
+    public CDU(String codigo, String descricao) {
+        this.codigo = codigo;
+        this.descricao = descricao;
+    }
     public Long getId() {
         return id;
     }

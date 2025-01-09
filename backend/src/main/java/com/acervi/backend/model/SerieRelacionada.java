@@ -11,9 +11,16 @@ public class SerieRelacionada {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String marc490TituloSerieColecao;
     private int marc490Volume;
+
+    public SerieRelacionada() {}
+
+    public SerieRelacionada(Long id, String marc490TituloSerieColecao, int marc490Volume) {
+        this.id = id;
+        this.marc490TituloSerieColecao = marc490TituloSerieColecao;
+        this.marc490Volume = marc490Volume;
+    }
 
     public Long getId() {
         return id;

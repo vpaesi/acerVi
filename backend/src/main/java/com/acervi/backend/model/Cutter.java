@@ -14,6 +14,17 @@ public class Cutter {
 
     private String codigo;
 
+    public Cutter() {}
+
+    public Cutter(Long id, String codigo) {
+        this.id = id;
+        this.codigo = codigo;
+    }
+
+    public Cutter(String codigoString) {
+        this.codigo = codigoString;
+    }
+
     public Long getId() {
         return id;
     }

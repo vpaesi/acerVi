@@ -61,10 +61,18 @@ public class LivroService {
         livroDTO.setEntradaPrincipal(livro.getEntradaPrincipal().stream()
                 .map(EntradaPrincipal::getMarc100NomePessoalEntidadeEventoTitulo)
                 .collect(Collectors.toList()));
-        livroDTO.setTituloPrincipal(
-                livro.getTituloPrincipal() != null
-                        ? livro.getTituloPrincipal().getMarc245TituloPrincipal()
-                        : null);
+        if (livro.getTituloPrincipal() != null) {
+            livroDTO.setTituloPrincipal(livro.getTituloPrincipal().getMarc245TituloPrincipal());
+            livroDTO.setSubtitulo(livro.getTituloPrincipal().getMarc245Subtitulo());
+        } else {
+            livroDTO.setTituloPrincipal(null);
+            livroDTO.setSubtitulo(null);
+        }
+        if (livro.getLinkImagem() != null) {
+            livroDTO.setLinkImagem(livro.getLinkImagem().getMarc856LinkImagem());
+        } else {
+            livroDTO.setLinkImagem(null);
+        }
         livroDTO.setDescricaoFisica(livro.getDescricaoFisica().getMarc300Páginas());
         livroDTO.setDistribuicao(livro.getDistribuicao().getMarc260Editora());
         livroDTO.setEdicao(
@@ -117,6 +125,7 @@ public class LivroService {
         livro.setAssuntoPessoa(dadosEditados.getAssuntoPessoa());
         livro.setEntradaSecundaria(dadosEditados.getEntradaSecundaria());
         livro.setEntradaSecundariaSerie(dadosEditados.getEntradaSecundariaSerie());
+        livro.setLinkImagem(dadosEditados.getLinkImagem());
 
         Livro atualizado = livroRepository.save(livro);
         logger.info("Livro com ID {} atualizado com sucesso: {}", id, atualizado);

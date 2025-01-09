@@ -23,6 +23,7 @@ public class Livro {
     @JoinColumn(name = "cutter_id")
     private Cutter cutter;
 
+    @NotNull
     @OneToMany(mappedBy = "livro", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<EntradaPrincipal> entradaPrincipal = new ArrayList<>();
@@ -53,6 +54,7 @@ public class Livro {
     @JoinColumn(name = "assuntoPessoa_id")
     private AssuntoPessoa assuntoPessoa;
 
+    @NotNull
     @ElementCollection(targetClass = AssuntoTopico.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "livro_assunto_topico", joinColumns = @JoinColumn(name = "livro_id"))
     @Column(name = "assunto_topico")
@@ -67,9 +69,45 @@ public class Livro {
     )
     private List<EntradaSecundaria> entradaSecundaria = new ArrayList<>();
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "linkImagem_id")
+    private LinkImagem linkImagem;
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "entradaSecundariaSerie_id")
     private EntradaSecundariaSerie entradaSecundariaSerie;
+
+    public Livro() {}
+
+    public Livro(
+        CDU cdu, 
+        Cutter cutter, 
+        List<EntradaPrincipal> entradaPrincipal, 
+        TituloPrincipal tituloPrincipal, 
+        Edicao edicao, 
+        Distribuicao distribuicao, 
+        DescricaoFisica descricaoFisica, 
+        SerieRelacionada serieRelacionada,
+        AssuntoPessoa assuntoPessoa,
+        List<AssuntoTopico> assuntoTopico,
+        List<EntradaSecundaria> entradaSecundaria,
+        EntradaSecundariaSerie entradaSecundariaSerie,
+        LinkImagem linkImagem) 
+        {
+        this.cdu = cdu;
+        this.cutter = cutter;
+        this.entradaPrincipal = entradaPrincipal;
+        this.tituloPrincipal = tituloPrincipal;
+        this.edicao = edicao;
+        this.distribuicao = distribuicao;
+        this.descricaoFisica = descricaoFisica;
+        this.serieRelacionada = serieRelacionada;
+        this.assuntoPessoa = assuntoPessoa;
+        this.assuntoTopico = assuntoTopico;
+        this.entradaSecundaria = entradaSecundaria;
+        this.entradaSecundariaSerie = entradaSecundariaSerie;
+        this.linkImagem = linkImagem;
+    }            
 
     public Long getId() {
         return id;
@@ -173,5 +211,13 @@ public class Livro {
 
     public void setEntradaSecundariaSerie(EntradaSecundariaSerie entradaSecundariaSerie) {
         this.entradaSecundariaSerie = entradaSecundariaSerie;
+    }
+
+    public LinkImagem getLinkImagem() {
+        return linkImagem;
+    }
+    
+    public void setLinkImagem(LinkImagem linkImagem) {
+        this.linkImagem = linkImagem;
     }
 }

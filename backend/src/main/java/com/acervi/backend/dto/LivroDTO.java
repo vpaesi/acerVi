@@ -8,6 +8,7 @@ public class LivroDTO {
 
     private Long id;
     private String tituloPrincipal;
+    private String subtitulo;
     private Long cduId;
     private String cduCodigo;
     private String cduDescricao;
@@ -20,6 +21,7 @@ public class LivroDTO {
     private String edicao;
     private String serieRelacionada;
     private String assuntoPessoa;
+    private String linkImagem;
 
     public Long getId() {
         return id;
@@ -35,6 +37,14 @@ public class LivroDTO {
 
     public void setTituloPrincipal(String tituloPrincipal) {
         this.tituloPrincipal = tituloPrincipal;
+    }
+
+    public String getSubtitulo() {
+        return subtitulo;
+    }
+    
+    public void setSubtitulo(String subtitulo) {
+        this.subtitulo = subtitulo;
     }
 
     public Long getCduId() {
@@ -132,4 +142,13 @@ public class LivroDTO {
     public void setAssuntoPessoa(String assuntoPessoa) {
         this.assuntoPessoa = assuntoPessoa;
     }
+
+    public String getLinkImagem() {
+        return linkImagem;
+    }
+
+    public void setLinkImagem(String linkImagem) {
+        this.linkImagem = linkImagem;
+    }
+
 }
