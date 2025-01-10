@@ -22,43 +22,43 @@ public class CDUController {
     @Autowired
     private CDUService cduService;
 
-    @Operation(summary = "Criar uma nova CDU")
+    @Operation(summary = "Criate new CDU")
     @PostMapping
     public ResponseEntity<?> criarCDU(@RequestBody CDU cdu) {
-        logger.info("Recebida solicitação para criar CDU: {}", cdu);
-        if (cdu.getCodigo() == null || cdu.getCodigo().isEmpty()) {
-            logger.warn("Código da CDU inválido: {}", cdu.getCodigo());
-            return ResponseEntity.badRequest().body("O código da CDU é obrigatório.");
+        logger.info("Request received for create CDU: {}", cdu);
+        if (cdu.getCode() == null || cdu.getCode().isEmpty()) {
+            logger.warn("Code of CDU invalid: {}", cdu.getCode());
+            return ResponseEntity.badRequest().body("The code of the CDU is mandatory.");
         }
-        if (cdu.getDescricao() == null || cdu.getDescricao().isEmpty()) {
-            logger.warn("Descrição da CDU inválida: {}", cdu.getDescricao());
-            return ResponseEntity.badRequest().body("A descrição da CDU é obrigatória.");
+        if (cdu.getDescription() == null || cdu.getDescription().isEmpty()) {
+            logger.warn("Description of CDU invalid: {}", cdu.getDescription());
+            return ResponseEntity.badRequest().body("The description of the CDU is mandatory.");
         }
-        CDU novaCdu = cduService.criarCDU(cdu);
-        logger.info("CDU criada com sucesso: {}", novaCdu);
-        return ResponseEntity.ok(novaCdu);
+        CDU newCDU = cduService.criarCDU(cdu);
+        logger.info("CDU successfully created: {}", newCDU);
+        return ResponseEntity.ok(newCDU);
     }
 
-    @Operation(summary = "Listar todas as CDU disponíveis")
+    @Operation(summary = "Search all CDU available")
     @GetMapping
-    public ResponseEntity<List<CDU>> listarCDU() {
-        logger.info("Recebida solicitação para listar todas as CDUs");
-        List<CDU> cdus = cduService.listarCDU();
-        logger.info("CDUs encontradas: {}", cdus);
+    public ResponseEntity<List<CDU>> searchCDU() {
+        logger.info("Request received to search all CDU");
+        List<CDU> cdus = cduService.searchCDU();
+        logger.info("Found CDU: {}", cdus);
         return ResponseEntity.ok(cdus);
     }
 
-    @Operation(summary = "Excluir uma CDU pelo ID")
+    @Operation(summary = "Delete CDU by ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> excluirCDU(@PathVariable Long id) {
-        logger.info("Recebida solicitação para excluir CDU com ID: {}", id);
+    public ResponseEntity<?> deleteCDU(@PathVariable Long id) {
+        logger.info("Request received to delete CDU with ID: {}", id);
         try {
-            cduService.excluirCDU(id);
-            logger.info("CDU com ID {} excluída com sucesso", id);
+            cduService.deleteCDU(id);
+            logger.info("CDU with ID {} successufully deleted", id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            logger.error("Erro ao excluir CDU com ID {}: {}", id, e.getMessage());
-            return ResponseEntity.status(500).body("Erro ao excluir CDU: " + e.getMessage());
+            logger.error("Error when deleting CDU with ID {}: {}", id, e.getMessage());
+            return ResponseEntity.status(500).body("Error when delete CDU: " + e.getMessage());
         }
     }
 }

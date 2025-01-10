@@ -11,14 +11,14 @@ public class CDU {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String codigo;
-    private String descricao;
+    private String code;
+    private String description;
 
     public CDU() {}
 
-    public CDU(String codigo, String descricao) {
-        this.codigo = codigo;
-        this.descricao = descricao;
+    public CDU(String code, String description) {
+        this.code = code;
+        this.description = description;
     }
     public Long getId() {
         return id;
@@ -26,16 +26,16 @@ public class CDU {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getCodigo() {
-        return codigo;
+    public String getCode() {
+        return code;
     }
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setCode(String code) {
+        this.code = code;
     }
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -19,39 +19,39 @@ public class CDUService {
     }
 
     public CDU criarCDU(CDU cdu) {
-        if (cdu.getCodigo() == null || cdu.getCodigo().isEmpty()) {
+        if (cdu.getCode() == null || cdu.getCode().isEmpty()) {
             throw new IllegalArgumentException("O código da CDU é obrigatório.");
         }
-        if (cdu.getDescricao() == null || cdu.getDescricao().isEmpty()) {
+        if (cdu.getDescription() == null || cdu.getDescription().isEmpty()) {
             throw new IllegalArgumentException("A descrição da CDU é obrigatória.");
         }
         return cduRepository.save(cdu);
     }
 
-    public CDU editarCDU(Long id, CDU dadosEditados) {
+    public CDU editCDU(Long id, CDU editedData) {
         CDU cduExistente = cduRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("CDU com ID " + id + " não encontrada"));
-        cduExistente.setCodigo(dadosEditados.getCodigo());
-        cduExistente.setDescricao(dadosEditados.getDescricao());
+        cduExistente.setCode(editedData.getCode());
+        cduExistente.setDescription(editedData.getDescription());
         return cduRepository.save(cduExistente);    
     }
 
-    public void excluirCDU(Long id) {
+    public void deleteCDU(Long id) {
         cduRepository.deleteById(id);
     }
 
-    public List<CDU> listarCDU() {
+    public List<CDU> searchCDU() {
         return cduRepository.findAll();
     }   
     
-    public CDU buscarOuCriarCDU(CDU cdu) {
+    public CDU searchOrCreateCDU(CDU cdu) {
         if (cdu.getId() != null) {
             return cduRepository.findById(cdu.getId())
                     .orElseThrow(() -> new IllegalArgumentException("CDU com ID " + cdu.getId() + " não encontrada"));
         }
-        if (cdu.getCodigo() != null) {
+        if (cdu.getCode() != null) {
             return cduRepository.findAll().stream()
-                    .filter(existingCdu -> existingCdu.getCodigo().equals(cdu.getCodigo()))
+                    .filter(existingCdu -> existingCdu.getCode().equals(cdu.getCode()))
                     .findFirst()
                     .orElseGet(() -> cduRepository.save(cdu));
         }

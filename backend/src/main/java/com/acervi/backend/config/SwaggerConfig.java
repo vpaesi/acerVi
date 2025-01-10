@@ -17,6 +17,6 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("API do AcerVi")
                         .version("1.0.0")
-                        .description("Documentação da API para gerenciamento de livros"));
+                        .description("Documentação da API para gerenciamento de books"));
     }
 }
