@@ -1,11 +1,15 @@
 package com.acervi.backend.service;
 
+import com.acervi.backend.dto.LivroDTO;
+import com.acervi.backend.mapper.LivroMapper;
 import com.acervi.backend.model.Livro;
 import com.acervi.backend.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class LivroService {
@@ -13,25 +17,31 @@ public class LivroService {
     @Autowired
     private LivroRepository livroRepository;
 
-    public Livro salvarLivro(Livro livro) {
-        validarEntradas(livro);
-        return livroRepository.save(livro);
+    @Autowired
+    private LivroMapper livroMapper;
+
+    public LivroDTO salvarLivro(LivroDTO dto) {
+        // validações podem ser feitas aqui
+
+        Livro livro = livroMapper.toEntity(dto);
+        Livro salvo = livroRepository.save(livro);
+        return livroMapper.toDTO(salvo);
     }
 
-    public Livro buscarPorCdu(String cdu) {
-        return livroRepository.findById(cdu).orElseThrow(() ->
-            new NoSuchElementException("Livro com CDU " + cdu + " não encontrado."));
+    public LivroDTO buscarPorCutter(String cutter) {
+        Livro livro = livroRepository.findById(cutter)
+                .orElseThrow(() -> new NoSuchElementException("Livro não encontrado para cutter: " + cutter));
+        return livroMapper.toDTO(livro);
     }
 
-    public List<Livro> listarTodos() {
-        return livroRepository.findAll();
+    public List<LivroDTO> listarTodos() {
+        List<Livro> livros = livroRepository.findAll();
+        return livros.stream()
+                .map(livroMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    private void validarEntradas(Livro livro) {
-        // Exemplo: não permitir mesmo tipo para entrada principal e secundária
-        if (livro.getTipoEntradaPrincipal() != null && livro.getTipoEntradaSecundaria() != null &&
-            livro.getTipoEntradaPrincipal().toString().equalsIgnoreCase(livro.getTipoEntradaSecundaria().toString())) {
-            throw new IllegalArgumentException("Tipo da entrada principal e secundária não podem ser iguais.");
-        }
+    public void excluirPorCutter(String cutter) {
+        livroRepository.deleteById(cutter);
     }
 }

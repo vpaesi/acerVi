@@ -1,56 +1,96 @@
 package com.acervi.backend.model;
 
-import com.acervi.backend.EntradaPrincipal;
-import com.acervi.backend.EntradaSecundaria;
+import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class Livro {
 
     @Id
-    @Column(name = "cdu", nullable = false, unique = true)
-    private String cdu; // Identificador principal
+    private String cutter; 
 
-    private String titulo;
-    private String subtitulo;
-    private String cutter; // Código de ordenação
+    @Embedded
+    private Cdu cdu080;
 
-    @Enumerated(EnumType.STRING)
-    private EntradaPrincipal entradaPrincipal;
+    @Embedded
+    private EntradaPrincipalSet entradaPrincipal1xx;
 
-    @Enumerated(EnumType.STRING)
-    private EntradaSecundaria entradaSecundaria;
+    private String tituloPrincipal245;
 
-    private String autorPrincipal;     // Nome ou entidade
-    private String autoresSecundarios; // Lista como string ou mapear como entidade depois
+    @Embedded
+    private Edicao edicao;
 
-    private String editora;
-    private String anoPublicacao;
-    private String isbn;
-    private String idioma;
-    private String genero;
-    private int numeroPaginas;
-    private String sinopse;
-    private String capaUrl; // link para imagem
-    public Object getTipoEntradaPrincipal() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTipoEntradaPrincipal'");
+    private String extencao300a;
+
+    @ElementCollection
+    private List<String> assuntoTopico650a;
+
+    private String capa;
+
+    @Embedded
+    private EntradaSecundariaSet entradaSecundaria7xx;
+
+    // Novos campos independentes para séries 490 e 830
+    private String serie490;
+
+    private String serie830;
+
+    @Embeddable
+    @Getter
+    @Setter
+    public static class Cdu {
+        @Column(name = "cdu")
+        private String aCodigo;
+
+        @Column(name = "cdu_descricao")
+        private String descricao;
     }
-    public Object getTipoEntradaSecundaria() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTipoEntradaSecundaria'");
+
+    @Embeddable
+    @Getter
+    @Setter
+    public static class EntradaPrincipalSet {
+        private String nomePessoal100;
+        private String nomeEntidade110;
+        private String nomeEvento111;
+        private String tituloUniforme130;
+    }
+
+    @Embeddable
+    @Getter
+    @Setter
+    public static class Edicao {
+        private String edicao250;
+        private String local260a;
+        private String editora260b;
+        private String data260c;
+    }
+
+    @Embeddable
+    @Getter
+    @Setter
+    public static class EntradaSecundariaSet {
+        @ElementCollection
+        private List<String> nomePessoal700;
+
+        private String nomeEntidade710;
+        private String nomeEvento711;
+        private String tituloUniforme730;
+
+        // Removido entradaSecundariaSerie830 daqui
     }
 }

@@ -1,6 +1,6 @@
 package com.acervi.backend.controller;
 
-import com.acervi.backend.model.Livro;
+import com.acervi.backend.dto.LivroDTO;
 import com.acervi.backend.service.LivroService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +17,25 @@ public class LivroController {
     private LivroService livroService;
 
     @PostMapping
-    public ResponseEntity<Livro> cadastrarLivro(@RequestBody @Valid Livro livro) {
-        Livro salvo = livroService.salvarLivro(livro);
+    public ResponseEntity<LivroDTO> cadastrarLivro(@RequestBody @Valid LivroDTO livroDTO) {
+        LivroDTO salvo = livroService.salvarLivro(livroDTO);
         return ResponseEntity.ok(salvo);
     }
 
-    @GetMapping("/{cdu}")
-    public ResponseEntity<Livro> buscarPorCdu(@PathVariable String cdu) {
-        return ResponseEntity.ok(livroService.buscarPorCdu(cdu));
+    @GetMapping("/{cutter}")
+    public ResponseEntity<LivroDTO> buscarPorCutter(@PathVariable String cutter) {
+        LivroDTO dto = livroService.buscarPorCutter(cutter);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping
-    public ResponseEntity<List<Livro>> listarTodos() {
+    public ResponseEntity<List<LivroDTO>> listarTodos() {
         return ResponseEntity.ok(livroService.listarTodos());
+    }
+
+    @DeleteMapping("/{cutter}")
+    public ResponseEntity<Void> deletar(@PathVariable String cutter) {
+        livroService.excluirPorCutter(cutter);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,22 +1,9 @@
-Aqui será o Readme do projeto
-
-ferramentas:
-miro
-
-back
-Spring Initializr - https://start.spring.io/
-postgreSQL
-pgAdmin
-Postman
-
-rodar projeto:
+rodar back
 cd backend
-mvn intall
-mvn spring-boot:run
 
-front
-react
-bootstrap
+mvn intall ou ./mvnw clean install
+
+mvn spring-boot:run ou ./mvnw spring-boot:run
 
 rodar projeto
 cd frontend
