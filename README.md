@@ -1,7 +1,8 @@
 rodar back
 cd backend
 
-mvn intall ou ./mvnw clean install
+mvn intall ou 
+
 
 mvn spring-boot:run ou ./mvnw spring-boot:run
 

@@ -21,7 +21,6 @@ public class LivroService {
     private LivroMapper livroMapper;
 
     public LivroDTO salvarLivro(LivroDTO dto) {
-        // validações podem ser feitas aqui
 
         Livro livro = livroMapper.toEntity(dto);
         Livro salvo = livroRepository.save(livro);

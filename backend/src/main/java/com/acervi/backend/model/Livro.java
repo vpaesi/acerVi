@@ -44,10 +44,9 @@ public class Livro {
     @Embedded
     private EntradaSecundariaSet entradaSecundaria7xx;
 
-    // Novos campos independentes para séries 490 e 830
-    private String serie490;
+    private String serieRelacionada_490;
 
-    private String serie830;
+    private String entradaSecundariaSerie_830;
 
     @Embeddable
     @Getter
@@ -90,7 +89,5 @@ public class Livro {
         private String nomeEntidade710;
         private String nomeEvento711;
         private String tituloUniforme730;
-
-        // Removido entradaSecundariaSerie830 daqui
     }
 }
