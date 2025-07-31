@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { usePersonalLibrary } from '../hooks/usePersonalLibrary';
 import { BookSearchModal } from './BookSearchModal';
 import { BookshelfView } from './BookshelfView';
+import { EditBookModal } from './EditBookModal';
 import { PersonalBook } from '../types/personalLibrary';
 import { loadSampleData } from '../data/sampleBooks';
 import { getMainCategories } from '../services/cduService';
@@ -22,6 +23,8 @@ export const PersonalLibrary: React.FC = () => {
   } = usePersonalLibrary();
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingBook, setEditingBook] = useState<PersonalBook | null>(null);
   const [searchText, setSearchText] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedCondition, setSelectedCondition] = useState<string>('');
@@ -73,6 +76,22 @@ export const PersonalLibrary: React.FC = () => {
     if (window.confirm('Tem certeza que deseja remover este livro do seu acervo?')) {
       removeBook(bookId);
     }
+  };
+
+  const handleEditBook = (book: PersonalBook) => {
+    setEditingBook(book);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (bookId: string, updates: Partial<PersonalBook>) => {
+    updateBook(bookId, updates);
+    setEditModalOpen(false);
+    setEditingBook(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setEditingBook(null);
   };
 
   if (loading) {
@@ -264,6 +283,7 @@ export const PersonalLibrary: React.FC = () => {
                   onUpdateStatus={handleUpdateStatus}
                   onToggleFavorite={handleToggleFavorite}
                   onRemove={handleRemoveBook}
+                  onEdit={handleEditBook}
                 />
               ))}
             </div>
@@ -276,6 +296,14 @@ export const PersonalLibrary: React.FC = () => {
         isOpen={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
         onAddToLibrary={handleAddBook}
+      />
+
+      {/* Modal de edição */}
+      <EditBookModal
+        isOpen={editModalOpen}
+        book={editingBook}
+        onClose={handleCloseEditModal}
+        onSave={handleSaveEdit}
       />
     </div>
   );
@@ -420,6 +448,53 @@ const styles = `
   color: #92400e;
   border: 1px solid #fcd34d;
 }
+
+/* Estilos para botões de ação */
+.book-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.edit-button,
+.remove-button {
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.edit-button {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.edit-button:hover {
+  background: #e5e7eb;
+  transform: scale(1.05);
+}
+
+.remove-button {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.remove-button:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+.status-select {
+  flex: 1;
+  min-width: 120px;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 12px;
+}
 `;
 
 // Injetar estilos
@@ -435,6 +510,7 @@ interface PersonalBookCardProps {
   onUpdateStatus: (id: string, status: PersonalBook['status']) => void;
   onToggleFavorite: (id: string, current?: boolean) => void;
   onRemove: (id: string) => void;
+  onEdit: (book: PersonalBook) => void;
 }
 
 const PersonalBookCard: React.FC<PersonalBookCardProps> = ({
@@ -442,6 +518,7 @@ const PersonalBookCard: React.FC<PersonalBookCardProps> = ({
   onUpdateStatus,
   onToggleFavorite,
   onRemove,
+  onEdit,
 }) => {
   const getStatusColor = (status: PersonalBook['status']) => {
     switch (status) {
@@ -543,6 +620,14 @@ const PersonalBookCard: React.FC<PersonalBookCardProps> = ({
             <option value="lido">Lido</option>
             <option value="abandonado">Abandonado</option>
           </select>
+          
+          <button
+            onClick={() => onEdit(book)}
+            className="edit-button"
+            title="Editar livro"
+          >
+            ✏️
+          </button>
           
           <button
             onClick={() => onRemove(book.id)}
