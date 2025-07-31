@@ -33,6 +33,8 @@ interface UsePersonalLibraryReturn {
     favorite?: boolean;
     searchText?: string;
     rating?: number[];
+    cduCode?: string[];
+    cduMainCategory?: string;
   }) => void;
   setSorting: (field: 'title' | 'authors' | 'addedAt' | 'rating' | 'publishedDate', direction?: 'asc' | 'desc') => void;
   clearFilters: () => void;
@@ -53,6 +55,8 @@ export const usePersonalLibrary = (): UsePersonalLibraryReturn => {
     favorite?: boolean;
     searchText?: string;
     rating?: number[];
+    cduCode?: string[];
+    cduMainCategory?: string;
   }>({});
   const [sorting, setSortingState] = useState<{
     field: 'title' | 'authors' | 'addedAt' | 'rating' | 'publishedDate';

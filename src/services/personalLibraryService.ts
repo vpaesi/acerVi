@@ -99,6 +99,8 @@ export class PersonalLibraryService {
     favorite?: boolean;
     searchText?: string;
     rating?: number[];
+    cduCode?: string[];
+    cduMainCategory?: string;
   }): PersonalBook[] {
     return books.filter(book => {
       // Filtro por status
@@ -121,7 +123,17 @@ export class PersonalLibraryService {
         if (!book.rating || !filters.rating.includes(book.rating)) return false;
       }
 
-      // Filtro por texto (título, autor, descrição)
+      // Filtro por código CDU específico
+      if (filters.cduCode && filters.cduCode.length > 0) {
+        if (!book.cduCode || !filters.cduCode.includes(book.cduCode)) return false;
+      }
+
+      // Filtro por categoria principal CDU
+      if (filters.cduMainCategory) {
+        if (!book.cduCode || !book.cduCode.startsWith(filters.cduMainCategory)) return false;
+      }
+
+      // Filtro por texto (título, autor, descrição, CDU)
       if (filters.searchText) {
         const searchLower = filters.searchText.toLowerCase();
         const titleMatch = book.title.toLowerCase().includes(searchLower);
@@ -129,8 +141,10 @@ export class PersonalLibraryService {
           author.toLowerCase().includes(searchLower)
         );
         const descMatch = book.description?.toLowerCase().includes(searchLower) || false;
+        const cduMatch = book.cduCode?.toLowerCase().includes(searchLower) || false;
+        const cutterMatch = book.cutterCode?.toLowerCase().includes(searchLower) || false;
         
-        if (!titleMatch && !authorMatch && !descMatch) return false;
+        if (!titleMatch && !authorMatch && !descMatch && !cduMatch && !cutterMatch) return false;
       }
 
       return true;

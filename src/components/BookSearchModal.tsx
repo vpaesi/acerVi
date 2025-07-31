@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BookSearch } from './BookSearch';
 import { Book } from '../types/book';
 import { PersonalBook } from '../types/personalLibrary';
+import { CDU_CLASSIFICATIONS, generateCutter, getCDUByCode } from '../services/cduService';
 import './BookSearchModal.css';
 
 interface BookSearchModalProps {
@@ -28,8 +29,10 @@ export const BookSearchModal: React.FC<BookSearchModalProps> = ({
     condition: PersonalBook['condition'];
     rating?: number;
     personalNotes?: string;
-    location?: string;
+    physicalLocation?: string;
     favorite?: boolean;
+    cduCode?: string;
+    cutterCode?: string;
   }) => {
     if (!selectedBook) return;
 
@@ -46,6 +49,8 @@ export const BookSearchModal: React.FC<BookSearchModalProps> = ({
       description: volumeInfo.description,
       imageUrl: volumeInfo.imageLinks?.thumbnail || volumeInfo.imageLinks?.smallThumbnail,
       categories: volumeInfo.categories,
+      callNumber: formData.cduCode && formData.cutterCode ? 
+        `${formData.cduCode} ${formData.cutterCode}` : undefined,
       ...formData,
     };
 
@@ -97,8 +102,10 @@ interface AddToLibraryFormProps {
     condition: PersonalBook['condition'];
     rating?: number;
     personalNotes?: string;
-    location?: string;
+    physicalLocation?: string;
     favorite?: boolean;
+    cduCode?: string;
+    cutterCode?: string;
   }) => void;
   onCancel: () => void;
 }
@@ -113,9 +120,23 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
     condition: 'novo' as PersonalBook['condition'],
     rating: undefined as number | undefined,
     personalNotes: '',
-    location: '',
+    physicalLocation: '',
     favorite: false,
+    cduCode: '',
+    cutterCode: '',
   });
+
+  // Gera automaticamente o código Cutter quando o CDU é selecionado
+  const handleCDUChange = (cduCode: string) => {
+    const authorName = book.volumeInfo.authors?.[0] || '';
+    const cutterCode = generateCutter(authorName, book.volumeInfo.title);
+    
+    setFormData(prev => ({
+      ...prev,
+      cduCode,
+      cutterCode
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,6 +204,53 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
 
         <div className="form-row">
           <div className="form-group">
+            <label htmlFor="cdu">Classificação CDU</label>
+            <select
+              id="cdu"
+              value={formData.cduCode}
+              onChange={(e) => handleCDUChange(e.target.value)}
+            >
+              <option value="">Selecione uma classificação CDU</option>
+              {CDU_CLASSIFICATIONS.map((cdu) => (
+                <option key={cdu.code} value={cdu.code}>
+                  {cdu.code} - {cdu.description}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="cutter">Código Cutter</label>
+            <input
+              type="text"
+              id="cutter"
+              value={formData.cutterCode}
+              onChange={(e) => setFormData(prev => ({ 
+                ...prev, 
+                cutterCode: e.target.value 
+              }))}
+              placeholder="Gerado automaticamente"
+              title={`Gerado com base no autor: ${book.volumeInfo.authors?.[0] || 'N/A'}`}
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="physicalLocation">Localização Física</label>
+            <input
+              type="text"
+              id="physicalLocation"
+              value={formData.physicalLocation}
+              onChange={(e) => setFormData(prev => ({ 
+                ...prev, 
+                physicalLocation: e.target.value 
+              }))}
+              placeholder="Ex: Sala 1, Estante A, Prateleira 2"
+            />
+          </div>
+
+          <div className="form-group">
             <label htmlFor="rating">Avaliação (1-5 estrelas)</label>
             <select
               id="rating"
@@ -199,17 +267,6 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
               <option value="4">4 ⭐</option>
               <option value="5">5 ⭐</option>
             </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="location">Localização</label>
-            <input
-              type="text"
-              id="location"
-              value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              placeholder="Ex: Estante A, prateleira 2"
-            />
           </div>
         </div>
 

@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usePersonalLibrary } from '../hooks/usePersonalLibrary';
 import { BookSearchModal } from './BookSearchModal';
+import { BookshelfView } from './BookshelfView';
 import { PersonalBook } from '../types/personalLibrary';
 import { loadSampleData } from '../data/sampleBooks';
+import { getMainCategories } from '../services/cduService';
 import './PersonalLibrary.css';
 
 export const PersonalLibrary: React.FC = () => {
@@ -23,7 +25,9 @@ export const PersonalLibrary: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedCondition, setSelectedCondition] = useState<string>('');
+  const [selectedCDUCategory, setSelectedCDUCategory] = useState<string>('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'bookshelf'>('grid');
   const sortField = 'addedAt' as const;
   const sortDirection = 'desc' as const;
 
@@ -34,16 +38,18 @@ export const PersonalLibrary: React.FC = () => {
       status?: string[];
       condition?: string[];
       favorite?: boolean;
+      cduMainCategory?: string;
     } = {};
     
     if (searchText) filters.searchText = searchText;
     if (selectedStatus) filters.status = [selectedStatus];
     if (selectedCondition) filters.condition = [selectedCondition];
+    if (selectedCDUCategory) filters.cduMainCategory = selectedCDUCategory;
     if (showFavoritesOnly) filters.favorite = true;
     
     setFilters(filters);
     setSorting(sortField, sortDirection);
-  }, [searchText, selectedStatus, selectedCondition, showFavoritesOnly, setFilters, setSorting, sortField, sortDirection]);
+  }, [searchText, selectedStatus, selectedCondition, selectedCDUCategory, showFavoritesOnly, setFilters, setSorting, sortField, sortDirection]);
 
   // Efeito para aplicar filtros quando mudam
   useEffect(() => {
@@ -151,6 +157,19 @@ export const PersonalLibrary: React.FC = () => {
             <option value="danificado">Danificado</option>
           </select>
 
+          <select
+            value={selectedCDUCategory}
+            onChange={(e) => setSelectedCDUCategory(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Todas as classificações CDU</option>
+            {getMainCategories().map((category) => (
+              <option key={category.code} value={category.code}>
+                {category.code} - {category.description}
+              </option>
+            ))}
+          </select>
+
           <label className="favorites-filter">
             <input
               type="checkbox"
@@ -159,6 +178,23 @@ export const PersonalLibrary: React.FC = () => {
             />
             Apenas favoritos
           </label>
+        </div>
+
+        <div className="view-controls">
+          <div className="view-mode-toggle">
+            <button
+              className={`view-mode-btn ${viewMode === 'grid' ? 'active' : ''}`}
+              onClick={() => setViewMode('grid')}
+            >
+              📋 Grade
+            </button>
+            <button
+              className={`view-mode-btn ${viewMode === 'bookshelf' ? 'active' : ''}`}
+              onClick={() => setViewMode('bookshelf')}
+            >
+              📚 Estante
+            </button>
+          </div>
         </div>
 
         <div className="actions-section">
@@ -212,17 +248,26 @@ export const PersonalLibrary: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="books-grid">
-            {filteredBooks.map((book) => (
-              <PersonalBookCard
-                key={book.id}
-                book={book}
-                onUpdateStatus={handleUpdateStatus}
-                onToggleFavorite={handleToggleFavorite}
-                onRemove={handleRemoveBook}
-              />
-            ))}
-          </div>
+          viewMode === 'bookshelf' ? (
+            <BookshelfView 
+              books={filteredBooks}
+              onUpdateStatus={handleUpdateStatus}
+              onToggleFavorite={handleToggleFavorite}
+              onRemove={handleRemoveBook}
+            />
+          ) : (
+            <div className="books-grid">
+              {filteredBooks.map((book) => (
+                <PersonalBookCard
+                  key={book.id}
+                  book={book}
+                  onUpdateStatus={handleUpdateStatus}
+                  onToggleFavorite={handleToggleFavorite}
+                  onRemove={handleRemoveBook}
+                />
+              ))}
+            </div>
+          )
         )}
       </div>
 
@@ -235,6 +280,155 @@ export const PersonalLibrary: React.FC = () => {
     </div>
   );
 };
+
+// Estilos CSS para os controles
+const styles = `
+.view-controls {
+  margin-left: auto;
+}
+
+.view-mode-toggle {
+  display: flex;
+  gap: 8px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.view-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.view-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+}
+
+.view-mode-btn.active {
+  background: white;
+  color: #2563eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.library-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filters-section {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 150px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.favorites-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .library-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-select {
+    min-width: auto;
+  }
+
+  .view-controls {
+    margin-left: 0;
+  }
+}
+
+/* Estilos para informações de catalogação */
+.cataloging-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.cdu-badge,
+.cutter-badge,
+.call-number-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: monospace;
+}
+
+.cdu-badge {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.cutter-badge {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.call-number-badge {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+`;
+
+// Injetar estilos
+if (typeof document !== 'undefined' && !document.getElementById('personal-library-styles')) {
+  const styleElement = document.createElement('style');
+  styleElement.id = 'personal-library-styles';
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+}
 
 interface PersonalBookCardProps {
   book: PersonalBook;
@@ -297,6 +491,21 @@ const PersonalBookCard: React.FC<PersonalBookCardProps> = ({
           <p className="book-publisher">{book.publisher}</p>
         )}
 
+        {/* Informações de catalogação bibliotecária */}
+        {(book.cduCode || book.cutterCode || book.callNumber) && (
+          <div className="cataloging-info">
+            {book.cduCode && (
+              <span className="cdu-badge">CDU: {book.cduCode}</span>
+            )}
+            {book.cutterCode && (
+              <span className="cutter-badge">Cutter: {book.cutterCode}</span>
+            )}
+            {book.callNumber && (
+              <span className="call-number-badge">Nº: {book.callNumber}</span>
+            )}
+          </div>
+        )}
+
         <div className="book-meta">
           <span 
             className="status-badge"
@@ -314,8 +523,8 @@ const PersonalBookCard: React.FC<PersonalBookCardProps> = ({
           )}
         </div>
 
-        {book.location && (
-          <p className="book-location">📍 {book.location}</p>
+        {book.physicalLocation && (
+          <p className="book-location">📍 {book.physicalLocation}</p>
         )}
 
         {book.personalNotes && (
