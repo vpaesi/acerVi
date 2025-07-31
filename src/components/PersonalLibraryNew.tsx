@@ -3,10 +3,11 @@ import { usePersonalLibrary } from '../hooks/usePersonalLibrary';
 import { BookSearchModal } from './BookSearchModal';
 import { BookshelfView } from './BookshelfView';
 import { EditBookModal } from './EditBookModal';
+import { PersonalBookCard } from './PersonalBookCard';
 import { PersonalBook } from '../types/personalLibrary';
 import { loadSampleData } from '../data/sampleBooks';
 import { getMainCategories } from '../services/cduService';
-import './PersonalLibrarySidebar.css';
+import './PersonalLibrary.css';
 
 export const PersonalLibrary: React.FC = () => {
   const {
@@ -25,11 +26,7 @@ export const PersonalLibrary: React.FC = () => {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<PersonalBook | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(() => {
-    // Lembra a preferência do usuário para o sidebar
-    const savedPreference = localStorage.getItem('acervi-sidebar-open');
-    return savedPreference ? JSON.parse(savedPreference) : false;
-  });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedCondition, setSelectedCondition] = useState<string>('');
@@ -38,11 +35,6 @@ export const PersonalLibrary: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'bookshelf'>('grid');
   const sortField = 'addedAt' as const;
   const sortDirection = 'desc' as const;
-
-  // Salva a preferência do sidebar quando muda
-  useEffect(() => {
-    localStorage.setItem('acervi-sidebar-open', JSON.stringify(sidebarOpen));
-  }, [sidebarOpen]);
 
   // Aplica filtros
   const applyFilters = useCallback(() => {
@@ -69,7 +61,7 @@ export const PersonalLibrary: React.FC = () => {
     applyFilters();
   }, [applyFilters]);
 
-  const handleAddBook = (book: Omit<PersonalBook, 'id' | 'addedAt' | 'updatedAt'>) => {
+  const handleAddBook = (book: Omit<PersonalBook, 'id'>) => {
     addBook(book);
   };
 
@@ -95,8 +87,8 @@ export const PersonalLibrary: React.FC = () => {
     setEditModalOpen(true);
   };
 
-  const handleSaveEdit = (id: string, updates: Partial<PersonalBook>) => {
-    updateBook(id, updates);
+  const handleSaveEdit = (book: PersonalBook) => {
+    updateBook(book.id, book);
     setEditModalOpen(false);
     setEditingBook(null);
   };
@@ -115,10 +107,9 @@ export const PersonalLibrary: React.FC = () => {
       {/* Header fixo com botão do menu */}
       <header className="app-header">
         <button 
-          className={`menu-toggle ${sidebarOpen ? 'active' : ''}`}
+          className="menu-toggle"
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          aria-label={sidebarOpen ? 'Fechar menu lateral' : 'Abrir menu lateral'}
-          title={sidebarOpen ? 'Fechar menu lateral' : 'Abrir menu lateral'}
+          aria-label="Toggle menu"
         >
           <span className="hamburger">☰</span>
         </button>
@@ -337,84 +328,14 @@ export const PersonalLibrary: React.FC = () => {
             ) : (
               <div className="books-grid">
                 {filteredBooks.map((book) => (
-                  <div key={book.id} className="book-card">
-                    <div className="book-card-header">
-                      <button
-                        className={`favorite-btn ${book.favorite ? 'active' : ''}`}
-                        onClick={() => handleToggleFavorite(book.id)}
-                        title={book.favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-                      >
-                        ⭐
-                      </button>
-                      <button
-                        className="edit-btn"
-                        onClick={() => handleEditBook(book)}
-                        title="Editar livro"
-                      >
-                        ✏️
-                      </button>
-                    </div>
-                    
-                    {book.imageUrl && (
-                      <img 
-                        src={book.imageUrl} 
-                        alt={`Capa de ${book.title}`} 
-                        className="book-cover" 
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    )}
-                    
-                    <div className="book-info">
-                      <h3 className="book-title">{book.title}</h3>
-                      <p className="book-authors">{book.authors?.join(', ')}</p>
-                      
-                      <div className="book-meta">
-                        <span className={`status-badge status-${book.status}`}>
-                          {book.status}
-                        </span>
-                        
-                        {book.cduCode && (
-                          <span className="cdu-code" title={book.description || ''}>
-                            CDU: {book.cduCode}
-                          </span>
-                        )}
-                        
-                        {book.cutterCode && (
-                          <span className="cutter-code">
-                            Cutter: {book.cutterCode}
-                          </span>
-                        )}
-                      </div>
-                      
-                      {book.personalNotes && (
-                        <p className="book-notes">{book.personalNotes}</p>
-                      )}
-                      
-                      <div className="book-actions">
-                        <select
-                          value={book.status}
-                          onChange={(e) => handleUpdateStatus(book.id, e.target.value as PersonalBook['status'])}
-                          className="status-select"
-                        >
-                          <option value="não-lido">Não Lido</option>
-                          <option value="quero-ler">Quero Ler</option>
-                          <option value="lendo">Lendo</option>
-                          <option value="lido">Lido</option>
-                          <option value="abandonado">Abandonado</option>
-                        </select>
-                        
-                        <button
-                          onClick={() => handleRemoveBook(book.id)}
-                          className="remove-button"
-                          title="Remover do acervo"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <PersonalBookCard
+                    key={book.id}
+                    book={book}
+                    onUpdateStatus={handleUpdateStatus}
+                    onToggleFavorite={handleToggleFavorite}
+                    onRemove={handleRemoveBook}
+                    onEdit={handleEditBook}
+                  />
                 ))}
               </div>
             )

@@ -94,12 +94,14 @@ export class GoogleBooksService {
    * Busca livros por autor
    * @param author Nome do autor
    * @param maxResults Número máximo de resultados
+   * @param startIndex Índice inicial para paginação
    * @returns Promise com a resposta da API
    */
-  static async searchByAuthor(author: string, maxResults = 10): Promise<GoogleBooksResponse> {
+  static async searchByAuthor(author: string, maxResults = 10, startIndex = 0): Promise<GoogleBooksResponse> {
     return this.searchBooks({
       query: `inauthor:"${author}"`,
-      maxResults
+      maxResults,
+      startIndex
     });
   }
 
@@ -107,12 +109,14 @@ export class GoogleBooksService {
    * Busca livros por título
    * @param title Título do livro
    * @param maxResults Número máximo de resultados
+   * @param startIndex Índice inicial para paginação
    * @returns Promise com a resposta da API
    */
-  static async searchByTitle(title: string, maxResults = 10): Promise<GoogleBooksResponse> {
+  static async searchByTitle(title: string, maxResults = 10, startIndex = 0): Promise<GoogleBooksResponse> {
     return this.searchBooks({
       query: `intitle:"${title}"`,
-      maxResults
+      maxResults,
+      startIndex
     });
   }
 

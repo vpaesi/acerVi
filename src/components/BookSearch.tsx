@@ -18,8 +18,13 @@ export const BookSearch: React.FC<BookSearchProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = useCallback(async () => {
+  const itemsPerPage = maxResults;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handleSearch = useCallback(async (page = 1) => {
     if (!searchQuery.trim()) {
       setError('Digite um termo para buscar');
       return;
@@ -27,16 +32,24 @@ export const BookSearch: React.FC<BookSearchProps> = ({
 
     setLoading(true);
     setError(null);
+    setHasSearched(true);
+
+    // Se é uma nova busca (página 1), resetar página atual
+    if (page === 1) {
+      setCurrentPage(1);
+    }
+
+    const searchStartIndex = (page - 1) * itemsPerPage;
 
     try {
       let response: GoogleBooksResponse;
 
       switch (searchType) {
         case 'title':
-          response = await GoogleBooksService.searchByTitle(searchQuery, maxResults);
+          response = await GoogleBooksService.searchByTitle(searchQuery, maxResults, searchStartIndex);
           break;
         case 'author':
-          response = await GoogleBooksService.searchByAuthor(searchQuery, maxResults);
+          response = await GoogleBooksService.searchByAuthor(searchQuery, maxResults, searchStartIndex);
           break;
         case 'isbn':
           response = await GoogleBooksService.searchByISBN(searchQuery);
@@ -44,12 +57,14 @@ export const BookSearch: React.FC<BookSearchProps> = ({
         default:
           response = await GoogleBooksService.searchBooks({
             query: searchQuery,
-            maxResults
+            maxResults,
+            startIndex: searchStartIndex
           });
       }
 
       setBooks(response.items || []);
       setTotalItems(response.totalItems);
+      setCurrentPage(page);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao buscar livros');
       setBooks([]);
@@ -57,11 +72,30 @@ export const BookSearch: React.FC<BookSearchProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, searchType, maxResults]);
+  }, [searchQuery, searchType, maxResults, itemsPerPage]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSearch();
+      handleSearch(1); // Sempre buscar da primeira página em nova busca
+    }
+  };
+
+  // Funções de navegação de páginas
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      handleSearch(page);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
     }
   };
 
@@ -91,7 +125,7 @@ export const BookSearch: React.FC<BookSearchProps> = ({
           />
           
           <button 
-            onClick={handleSearch} 
+            onClick={() => handleSearch(1)} 
             disabled={loading || !searchQuery.trim()}
             className="search-button"
           >
@@ -107,7 +141,57 @@ export const BookSearch: React.FC<BookSearchProps> = ({
 
         {totalItems > 0 && (
           <div className="search-info">
-            Encontrados {totalItems} resultado(s). Mostrando {books.length} livro(s).
+            <span>Encontrados {totalItems} resultado(s).</span>
+            {totalPages > 1 && (
+              <span> Página {currentPage} de {totalPages}.</span>
+            )}
+          </div>
+        )}
+
+        {/* Controles de paginação */}
+        {totalPages > 1 && hasSearched && (
+          <div className="pagination">
+            <button 
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1 || loading}
+              className="pagination-button"
+            >
+              ← Anterior
+            </button>
+            
+            <div className="page-numbers">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNumber;
+                if (totalPages <= 5) {
+                  pageNumber = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNumber = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNumber = totalPages - 4 + i;
+                } else {
+                  pageNumber = currentPage - 2 + i;
+                }
+                
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => goToPage(pageNumber)}
+                    disabled={loading}
+                    className={`page-button ${currentPage === pageNumber ? 'active' : ''}`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
+            </div>
+            
+            <button 
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages || loading}
+              className="pagination-button"
+            >
+              Próxima →
+            </button>
           </div>
         )}
       </div>
