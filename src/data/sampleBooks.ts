@@ -1,0 +1,107 @@
+import { PersonalBook } from '../types/personalLibrary';
+
+export const sampleBooks: PersonalBook[] = [
+  {
+    id: '1',
+    title: 'Clean Code: A Handbook of Agile Software Craftsmanship',
+    authors: ['Robert C. Martin'],
+    isbn: '9780132350884',
+    publisher: 'Prentice Hall',
+    publishedDate: '2008-08-01',
+    pageCount: 464,
+    description: 'Even bad code can function. But if code isn\'t clean, it can bring a development organization to its knees.',
+    imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1436202607i/3735293.jpg',
+    categories: ['Programming', 'Software Engineering'],
+    status: 'lido',
+    rating: 5,
+    personalNotes: 'Livro fundamental para qualquer desenvolvedor. Mudou minha forma de escrever código.',
+    condition: 'usado',
+    location: 'Estante A, prateleira 2',
+    favorite: true,
+    addedAt: '2024-01-15T10:30:00Z',
+    updatedAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '2',
+    title: '1984',
+    authors: ['George Orwell'],
+    isbn: '9780451524935',
+    publisher: 'Signet Classics',
+    publishedDate: '1949-06-08',
+    pageCount: 328,
+    description: 'A dystopian social science fiction novel and cautionary tale about the future.',
+    imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1657781256i/61439040.jpg',
+    categories: ['Fiction', 'Dystopian', 'Classics'],
+    status: 'lendo',
+    rating: 4,
+    personalNotes: 'Muito relevante nos dias atuais. Leitura obrigatória.',
+    condition: 'novo',
+    location: 'Mesa de cabeceira',
+    favorite: true,
+    addedAt: '2024-07-20T14:20:00Z',
+    updatedAt: '2024-07-25T09:15:00Z',
+  },
+  {
+    id: '3',
+    title: 'The Pragmatic Programmer',
+    authors: ['David Thomas', 'Andrew Hunt'],
+    isbn: '9780135957059',
+    publisher: 'Addison-Wesley Professional',
+    publishedDate: '2019-09-13',
+    pageCount: 352,
+    description: 'Your journey to mastery of software development.',
+    categories: ['Programming', 'Career Development'],
+    status: 'quero-ler',
+    condition: 'novo',
+    location: 'Estante A, prateleira 1',
+    favorite: false,
+    addedAt: '2024-07-10T16:45:00Z',
+    updatedAt: '2024-07-10T16:45:00Z',
+  },
+  {
+    id: '4',
+    title: 'Dom Casmurro',
+    authors: ['Machado de Assis'],
+    publisher: 'Ática',
+    publishedDate: '1899-01-01',
+    pageCount: 256,
+    description: 'Obra-prima da literatura brasileira que narra a história de Bentinho e Capitu.',
+    categories: ['Literatura Brasileira', 'Romance', 'Clássicos'],
+    status: 'lido',
+    rating: 4,
+    personalNotes: 'Releitura após muitos anos. A escrita do Machado é genial.',
+    condition: 'seminovo',
+    location: 'Estante B, prateleira 3',
+    favorite: false,
+    addedAt: '2024-06-05T11:20:00Z',
+    updatedAt: '2024-06-15T14:30:00Z',
+  },
+  {
+    id: '5',
+    title: 'Atomic Habits',
+    authors: ['James Clear'],
+    isbn: '9780735211292',
+    publisher: 'Avery',
+    publishedDate: '2018-10-16',
+    pageCount: 320,
+    description: 'An Easy & Proven Way to Build Good Habits & Break Bad Ones',
+    imageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg',
+    categories: ['Self Help', 'Psychology', 'Productivity'],
+    status: 'não-lido',
+    condition: 'novo',
+    location: 'Estante C, prateleira 1',
+    favorite: false,
+    addedAt: '2024-07-30T08:10:00Z',
+    updatedAt: '2024-07-30T08:10:00Z',
+  }
+];
+
+// Função para carregar dados de exemplo (apenas se não houver dados)
+export const loadSampleData = () => {
+  const existingData = localStorage.getItem('acervi_personal_library');
+  if (!existingData || JSON.parse(existingData).length === 0) {
+    localStorage.setItem('acervi_personal_library', JSON.stringify(sampleBooks));
+    return true;
+  }
+  return false;
+};

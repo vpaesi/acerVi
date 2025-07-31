@@ -1,170 +1,220 @@
-# Google Books API - Componentes React
+# AcerVi - Sistema de Gerenciamento de Acervo Pessoal
 
-Este projeto implementa componentes React para integração com a Google Books API, permitindo buscar e exibir informações de livros.
+O **AcerVi** é uma aplicação React/TypeScript para gerenciar seu acervo pessoal de livros, com integração à Google Books API para descobrir novas leituras.
 
-## 📋 Estrutura do Projeto
+## 🏠 **Funcionalidades Principais**
+
+### **Acervo Pessoal (Foco Principal)**
+- ✅ **Gestão completa do seu acervo físico real**
+- ✅ Status de leitura (Não Lido, Lendo, Lido, Quero Ler, Abandonado)
+- ✅ Sistema de avaliações (1-5 estrelas)
+- ✅ Controle de condição física (Novo, Seminovo, Usado, Danificado)
+- ✅ Localização física dos livros (ex: "Estante A, prateleira 2")
+- ✅ Notas pessoais e comentários
+- ✅ Sistema de favoritos
+- ✅ Controle de empréstimos
+- ✅ Estatísticas do acervo
+- ✅ Filtros avançados e busca
+
+### **Descoberta de Novos Livros (Secundário)**
+- 📚 **Botão "Pesquisar por Novas Leituras"**
+- 🔍 Busca na Google Books API
+- ➕ Adição rápida ao acervo pessoal
+- 📝 Formulário completo para catalogação
+
+## 📋 **Estrutura do Projeto**
 
 ```
 src/
 ├── components/
-│   ├── BookSearch.tsx       # Componente principal de busca
-│   └── BookSearch.css       # Estilos do componente
+│   ├── PersonalLibrary.tsx     # Componente principal do acervo
+│   ├── PersonalLibrary.css     # Estilos do acervo
+│   ├── BookSearch.tsx          # Busca na Google Books API
+│   ├── BookSearch.css          # Estilos da busca
+│   ├── BookSearchModal.tsx     # Modal para descobrir livros
+│   └── BookSearchModal.css     # Estilos do modal
 ├── hooks/
-│   └── useGoogleBooks.ts    # Hook personalizado para API
+│   ├── usePersonalLibrary.ts   # Hook principal do acervo
+│   └── useGoogleBooks.ts       # Hook da Google Books API
 ├── services/
-│   └── googleBooksApi.ts    # Serviço da Google Books API
+│   ├── personalLibraryService.ts # Gerenciamento de dados locais
+│   └── googleBooksApi.ts       # Integração Google Books API
 ├── types/
-│   └── book.ts             # Interfaces TypeScript
+│   ├── personalLibrary.ts      # Tipos do acervo pessoal
+│   └── book.ts                 # Tipos da Google Books API
+├── data/
+│   └── sampleBooks.ts          # Dados de exemplo
 └── pages/
-    └── Home.tsx            # Exemplo de uso
+    └── Home.tsx                # Página principal
 ```
 
-## 🚀 Funcionalidades
+## 🎯 **Fluxo de Uso**
 
-### GoogleBooksService
-Serviço para interagir com a Google Books API:
-
-- `searchBooks(params)` - Busca geral com parâmetros customizáveis
-- `searchByTitle(title)` - Busca por título específico
-- `searchByAuthor(author)` - Busca por autor
-- `searchByISBN(isbn)` - Busca por ISBN
-- `getBookById(id)` - Busca livro específico por ID
-
-### BookSearch Component
-Componente React com interface completa de busca:
-
-- Busca por diferentes critérios (geral, título, autor, ISBN)
-- Exibição em grid responsivo
-- Loading states e tratamento de erros
-- Callback para seleção de livros
-- Informações detalhadas dos livros (capa, título, autor, etc.)
-
-### useGoogleBooks Hook
-Hook personalizado que encapsula a lógica da API:
-
-```typescript
-const {
-  books,
-  loading,
-  error,
-  totalItems,
-  searchBooks,
-  searchByTitle,
-  searchByAuthor,
-  searchByISBN,
-  getBookById,
-  clearResults,
-  clearError
-} = useGoogleBooks();
-```
-
-## 💻 Como Usar
-
-### 1. Busca Simples
+### **1. Página Principal - Acervo Pessoal**
 ```tsx
-import { BookSearch } from '../components/BookSearch';
+// Componente principal que exibe seu acervo
+<PersonalLibrary />
+```
 
-function MyComponent() {
-  const handleBookSelect = (book) => {
-    console.log('Livro selecionado:', book);
-  };
+**Funcionalidades:**
+- Dashboard com estatísticas do acervo
+- Grid de livros com informações completas
+- Filtros por status, condição, favoritos
+- Busca textual no acervo
+- Botão "📚 Pesquisar por Novas Leituras"
 
-  return (
-    <BookSearch 
-      onBookSelect={handleBookSelect}
-      maxResults={10}
-    />
-  );
+### **2. Descoberta de Novos Livros (Modal)**
+```tsx
+// Acionado pelo botão na página principal
+<BookSearchModal 
+  isOpen={true}
+  onClose={() => setOpen(false)}
+  onAddToLibrary={handleAddBook}
+/>
+```
+
+**Funcionalidades:**
+- Busca na Google Books API
+- Visualização de resultados
+- Formulário para adicionar ao acervo
+- Definição de status, condição, localização, etc.
+
+## 💾 **Gestão de Dados**
+
+### **Armazenamento Local**
+```typescript
+// Todos os dados ficam no localStorage do navegador
+const books = PersonalLibraryService.loadBooks();
+PersonalLibraryService.saveBooks(books);
+```
+
+### **Tipos de Dados do Acervo**
+```typescript
+interface PersonalBook {
+  // Informações básicas
+  id: string;
+  title: string;
+  authors: string[];
+  isbn?: string;
+  
+  // Gestão pessoal
+  status: 'não-lido' | 'lendo' | 'lido' | 'abandonado' | 'quero-ler';
+  rating?: number; // 1-5 estrelas
+  condition: 'novo' | 'seminovo' | 'usado' | 'danificado';
+  location?: string; // localização física
+  personalNotes?: string;
+  favorite?: boolean;
+  
+  // Controle de empréstimo
+  loanedTo?: string;
+  loanDate?: string;
 }
 ```
 
-### 2. Usando o Hook Diretamente
+## 🎨 **Interface do Usuário**
+
+### **Dashboard do Acervo**
+- **Header com estatísticas**: Total, Lidos, Lendo, Favoritos
+- **Controles de filtro**: Status, Condição, Busca textual
+- **Botão principal**: "📚 Pesquisar por Novas Leituras"
+- **Grid responsivo**: Cards dos livros com todas as informações
+
+### **Card do Livro**
+- Capa do livro (quando disponível)
+- Título e autor
+- Status com cores diferenciadas
+- Avaliação com estrelas
+- Localização física
+- Notas pessoais
+- Controles rápidos (status, favorito, remover)
+
+### **Modal de Descoberta**
+- Interface de busca na Google Books API
+- Resultados em grid
+- Formulário completo para adicionar ao acervo
+
+## 🚀 **Como Usar**
+
+### **1. Primeira Vez**
 ```tsx
-import { useGoogleBooks } from '../hooks/useGoogleBooks';
-
-function MyComponent() {
-  const { books, loading, error, searchByTitle } = useGoogleBooks();
-
-  const handleSearch = async () => {
-    await searchByTitle('Harry Potter');
-  };
-
-  return (
-    <div>
-      <button onClick={handleSearch}>Buscar</button>
-      {loading && <p>Carregando...</p>}
-      {error && <p>Erro: {error}</p>}
-      {books.map(book => (
-        <div key={book.id}>{book.volumeInfo.title}</div>
-      ))}
-    </div>
-  );
-}
+// Ao abrir pela primeira vez, você pode:
+// 1. Adicionar livros manualmente
+// 2. Carregar dados de exemplo
+loadSampleData(); // 5 livros de exemplo
 ```
 
-### 3. Usando o Serviço Diretamente
+### **2. Gerenciar Acervo**
 ```typescript
-import { GoogleBooksService } from '../services/googleBooksApi';
+const { 
+  books, 
+  stats, 
+  addBook, 
+  updateBook, 
+  removeBook,
+  setFilters 
+} = usePersonalLibrary();
 
-// Busca geral
-const results = await GoogleBooksService.searchBooks({
-  query: 'javascript programming',
-  maxResults: 10,
-  orderBy: 'relevance'
+// Adicionar livro
+addBook({
+  title: "Meu Livro",
+  authors: ["Autor"],
+  status: "não-lido",
+  condition: "novo"
 });
 
-// Busca por ISBN
-const book = await GoogleBooksService.searchByISBN('9780134685991');
+// Atualizar status
+updateBook(bookId, { status: "lido", rating: 5 });
 ```
 
-## 🎨 Personalização CSS
-
-O componente inclui estilos CSS responsivos. Você pode personalizar as seguintes classes:
-
-- `.book-search` - Container principal
-- `.search-inputs` - Container dos inputs de busca
-- `.books-grid` - Grid dos resultados
-- `.book-card` - Card individual do livro
-- `.book-image` - Container da imagem
-- `.book-info` - Informações do livro
-
-## 📚 Tipos de Busca Disponíveis
-
-1. **Busca Geral**: Busca em todos os campos
-2. **Por Título**: Busca específica no título (`intitle:`)
-3. **Por Autor**: Busca específica no autor (`inauthor:`)
-4. **Por ISBN**: Busca específica por ISBN (`isbn:`)
-
-## 🔧 Parâmetros de Busca
-
+### **3. Descobrir Novos Livros**
 ```typescript
-interface BookSearchParams {
-  query: string;                    // Termo de busca (obrigatório)
-  maxResults?: number;              // Máximo de resultados (padrão: 10)
-  startIndex?: number;              // Índice inicial para paginação
-  orderBy?: 'relevance' | 'newest'; // Ordenação
-  filter?: 'partial' | 'full' | 'free-ebooks' | 'paid-ebooks' | 'ebooks';
-  langRestrict?: string;            // Código do idioma (ex: 'pt', 'en')
-  printType?: 'all' | 'books' | 'magazines';
-}
+// Buscar na Google Books API
+const { searchBooks } = useGoogleBooks();
+await searchBooks({ query: "javascript programming" });
+
+// Adicionar ao acervo pessoal através do modal
 ```
 
-## 📱 Responsividade
+## 📱 **Responsividade**
 
-O componente é totalmente responsivo:
-- Desktop: Grid com múltiplas colunas
-- Tablet: Grid adaptativo
-- Mobile: Coluna única, inputs empilhados
+- **Desktop**: Grid com múltiplas colunas, filtros inline
+- **Tablet**: Grid adaptativo, controles reorganizados  
+- **Mobile**: Coluna única, filtros empilhados, interface otimizada
 
-## ⚠️ Limitações da API
+## � **Funcionalidades Avançadas**
 
-- Google Books API: 1000 requisições/dia (gratuito)
-- Alguns livros podem não ter todas as informações
-- Imagens podem não estar disponíveis para todos os livros
+### **Filtros e Busca**
+- Busca textual (título, autor, notas)
+- Filtro por status de leitura
+- Filtro por condição física
+- Filtro apenas favoritos
+- Ordenação por diferentes campos
 
-## 🛠️ Exemplo Completo
+### **Estatísticas**
+- Total de livros no acervo
+- Livros lidos vs não lidos
+- Livros favoritos
+- Livros emprestados
+- Média de avaliações
+- Total de páginas lidas
 
-Veja o arquivo `src/pages/Home.tsx` para um exemplo completo de implementação com:
-- Busca de livros
-- Seleção e exibição de detalhes
-- Interface responsiva
+### **Exportação/Importação**
+```typescript
+// Exportar dados
+const jsonData = PersonalLibraryService.exportData();
+
+// Importar dados
+PersonalLibraryService.importData(jsonData);
+```
+
+## � **Casos de Uso**
+
+1. **Bibliotecário Pessoal**: Catalogar e organizar sua biblioteca física
+2. **Leitor Ávido**: Acompanhar progresso de leitura e descobrir novos livros
+3. **Colecionador**: Controlar condição e localização dos exemplares
+4. **Empréstimos**: Rastrear livros emprestados a amigos
+5. **Estatísticas**: Analisar hábitos de leitura
+
+---
+
+**O AcerVi coloca seu acervo pessoal em primeiro lugar, com a Google Books API como ferramenta complementar para descobrir e adicionar novos títulos ao seu acervo real.**
