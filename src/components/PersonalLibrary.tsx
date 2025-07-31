@@ -3,6 +3,7 @@ import { usePersonalLibrary } from '../hooks/usePersonalLibrary';
 import { BookSearchModal } from './BookSearchModal';
 import { BookshelfView } from './BookshelfView';
 import { EditBookModal } from './EditBookModal';
+import { BookDetailsModal } from './BookDetailsModal';
 import { PersonalBook } from '../types/personalLibrary';
 import { loadSampleData } from '../data/sampleBooks';
 import { getMainCategories } from '../services/cduService';
@@ -24,7 +25,9 @@ export const PersonalLibrary: React.FC = () => {
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<PersonalBook | null>(null);
+  const [selectedBook, setSelectedBook] = useState<PersonalBook | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     // Lembra a preferência do usuário para o sidebar
     const savedPreference = localStorage.getItem('acervi-sidebar-open');
@@ -93,6 +96,16 @@ export const PersonalLibrary: React.FC = () => {
   const handleEditBook = (book: PersonalBook) => {
     setEditingBook(book);
     setEditModalOpen(true);
+  };
+
+  const handleViewBookDetails = (book: PersonalBook) => {
+    setSelectedBook(book);
+    setDetailsModalOpen(true);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setDetailsModalOpen(false);
+    setSelectedBook(null);
   };
 
   const handleSaveEdit = (id: string, updates: Partial<PersonalBook>) => {
@@ -337,18 +350,29 @@ export const PersonalLibrary: React.FC = () => {
             ) : (
               <div className="books-grid">
                 {filteredBooks.map((book) => (
-                  <div key={book.id} className="book-card">
+                  <div 
+                    key={book.id} 
+                    className="book-card"
+                    onClick={() => handleViewBookDetails(book)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className="book-card-header">
                       <button
                         className={`favorite-btn ${book.favorite ? 'active' : ''}`}
-                        onClick={() => handleToggleFavorite(book.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFavorite(book.id);
+                        }}
                         title={book.favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
                       >
                         ⭐
                       </button>
                       <button
                         className="edit-btn"
-                        onClick={() => handleEditBook(book)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditBook(book);
+                        }}
                         title="Editar livro"
                       >
                         ✏️
@@ -395,7 +419,11 @@ export const PersonalLibrary: React.FC = () => {
                       <div className="book-actions">
                         <select
                           value={book.status}
-                          onChange={(e) => handleUpdateStatus(book.id, e.target.value as PersonalBook['status'])}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            handleUpdateStatus(book.id, e.target.value as PersonalBook['status']);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
                           className="status-select"
                         >
                           <option value="não-lido">Não Lido</option>
@@ -406,7 +434,10 @@ export const PersonalLibrary: React.FC = () => {
                         </select>
                         
                         <button
-                          onClick={() => handleRemoveBook(book.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveBook(book.id);
+                          }}
                           className="remove-button"
                           title="Remover do acervo"
                         >
@@ -435,6 +466,17 @@ export const PersonalLibrary: React.FC = () => {
         book={editingBook}
         onClose={handleCloseEditModal}
         onSave={handleSaveEdit}
+      />
+
+      {/* Modal de detalhes - Ficha Catalográfica */}
+      <BookDetailsModal
+        isOpen={detailsModalOpen}
+        book={selectedBook}
+        onClose={handleCloseDetailsModal}
+        onEdit={handleEditBook}
+        onToggleFavorite={handleToggleFavorite}
+        onUpdateStatus={handleUpdateStatus}
+        onRemove={handleRemoveBook}
       />
     </div>
   );
