@@ -161,6 +161,19 @@ export const getMainCategories = (): CDUClassification[] => {
   return CDU_CLASSIFICATIONS.filter(cdu => cdu.code.length === 1);
 };
 
+// Função para obter apenas os códigos principais (0-9)
+export const getPrimaryCategories = (): CDUClassification[] => {
+  return CDU_CLASSIFICATIONS.filter(cdu => cdu.code.length === 1);
+};
+
+// Função para obter subcategorias baseadas no código principal selecionado
+export const getSubcategoriesByPrimary = (primaryCode: string): CDUClassification[] => {
+  if (!primaryCode) return [];
+  return CDU_CLASSIFICATIONS.filter(cdu => 
+    cdu.code.startsWith(primaryCode) && cdu.code !== primaryCode
+  );
+};
+
 // Função para gerar código Cutter baseada na tabela Cutter-Sanborn
 export const generateCutter = (author: string, title: string): string => {
   if (!author || author.length === 0) {

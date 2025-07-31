@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PersonalBook } from '../types/personalLibrary';
-import { getMainCategories, generateCutter } from '../services/cduService';
+import { generateCutter, getPrimaryCategories, getSubcategoriesByPrimary } from '../services/cduService';
 
 interface EditBookModalProps {
   isOpen: boolean;
@@ -16,6 +16,7 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
   onSave,
 }) => {
   const [formData, setFormData] = useState<Partial<PersonalBook>>({});
+  const [primaryCDU, setPrimaryCDU] = useState('');
 
   useEffect(() => {
     if (book) {
@@ -40,6 +41,14 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
         purchasePrice: book.purchasePrice,
         imageUrl: book.imageUrl,
       });
+
+      // Define o CDU primário baseado no código CDU atual
+      if (book.cduCode) {
+        const primaryCode = book.cduCode.charAt(0);
+        setPrimaryCDU(primaryCode);
+      } else {
+        setPrimaryCDU('');
+      }
     }
   }, [book]);
 
@@ -72,6 +81,18 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
       cduCode,
       cutterCode,
       callNumber,
+    }));
+  };
+
+  // Função para lidar com a mudança do CDU primário (0-9)
+  const handlePrimaryCDUChange = (primaryCode: string) => {
+    setPrimaryCDU(primaryCode);
+    // Limpa o CDU específico quando muda a categoria principal
+    setFormData(prev => ({
+      ...prev,
+      cduCode: '',
+      cutterCode: '',
+      callNumber: ''
     }));
   };
 
@@ -178,19 +199,39 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
             <div className="form-section">
               <h3>Catalogação Bibliotecária</h3>
               
-              <div className="form-group">
-                <label>Classificação CDU</label>
-                <select
-                  value={formData.cduCode || ''}
-                  onChange={(e) => handleCDUChange(e.target.value)}
-                >
-                  <option value="">Selecionar classificação</option>
-                  {getMainCategories().map((category) => (
-                    <option key={category.code} value={category.code}>
-                      {category.code} - {category.description}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Categoria Principal CDU</label>
+                  <select
+                    value={primaryCDU}
+                    onChange={(e) => handlePrimaryCDUChange(e.target.value)}
+                  >
+                    <option value="">Selecione a categoria principal (0-9)</option>
+                    {getPrimaryCategories().map((category) => (
+                      <option key={category.code} value={category.code}>
+                        {category.code} - {category.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Classificação Específica</label>
+                  <select
+                    value={formData.cduCode || ''}
+                    onChange={(e) => handleCDUChange(e.target.value)}
+                    disabled={!primaryCDU}
+                  >
+                    <option value="">
+                      {primaryCDU ? 'Selecione a classificação específica' : 'Primeiro selecione a categoria principal'}
                     </option>
-                  ))}
-                </select>
+                    {primaryCDU && getSubcategoriesByPrimary(primaryCDU).map((cdu) => (
+                      <option key={cdu.code} value={cdu.code}>
+                        {cdu.code} - {cdu.description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="form-row">
