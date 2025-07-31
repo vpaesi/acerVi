@@ -83,7 +83,7 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
   if (!isOpen || !book) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay edit-modal" onClick={onClose}>
       <div className="modal-content edit-book-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Editar Livro</h2>

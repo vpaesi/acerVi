@@ -96,6 +96,11 @@ export const PersonalLibrary: React.FC = () => {
   const handleEditBook = (book: PersonalBook) => {
     setEditingBook(book);
     setEditModalOpen(true);
+    // Fecha o modal de detalhes se estiver aberto
+    if (detailsModalOpen) {
+      setDetailsModalOpen(false);
+      setSelectedBook(null);
+    }
   };
 
   const handleViewBookDetails = (book: PersonalBook) => {
