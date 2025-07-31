@@ -77,8 +77,7 @@
 }
 
 .favorite-btn.active {
-  background: #ffd700 !important;
-  color: #333 !important;
+  color: #ffd700 !important;
 }
 
 .edit-btn {

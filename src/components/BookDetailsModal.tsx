@@ -67,7 +67,7 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
               onClick={() => onToggleFavorite(book.id)}
               title={book.favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
             >
-              ⭐
+              {book.favorite ? '⭐' : '☆'}
             </button>
             <button
               className="edit-btn"

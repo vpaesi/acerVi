@@ -379,7 +379,8 @@
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  color: #666;
 }
 
 .favorite-btn:hover, .edit-btn:hover {

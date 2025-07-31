@@ -3,7 +3,7 @@ import { usePersonalLibrary } from '../hooks/usePersonalLibrary';
 import { BookSearchModal } from './BookSearchModal';
 import { BookshelfView } from './BookshelfView';
 import { EditBookModal } from './EditBookModal';
-import { PersonalBookCard } from './PersonalBookCard';
+import { StatisticsCharts } from './StatisticsCharts';
 import { PersonalBook } from '../types/personalLibrary';
 import { loadSampleData } from '../data/sampleBooks';
 import { getMainCategories } from '../services/cduService';
@@ -61,7 +61,7 @@ export const PersonalLibrary: React.FC = () => {
     applyFilters();
   }, [applyFilters]);
 
-  const handleAddBook = (book: Omit<PersonalBook, 'id'>) => {
+  const handleAddBook = (book: Omit<PersonalBook, 'id' | 'addedAt' | 'updatedAt'>) => {
     addBook(book);
   };
 
@@ -87,8 +87,8 @@ export const PersonalLibrary: React.FC = () => {
     setEditModalOpen(true);
   };
 
-  const handleSaveEdit = (book: PersonalBook) => {
-    updateBook(book.id, book);
+  const handleSaveEdit = (id: string, updates: Partial<PersonalBook>) => {
+    updateBook(id, updates);
     setEditModalOpen(false);
     setEditingBook(null);
   };
@@ -127,29 +127,7 @@ export const PersonalLibrary: React.FC = () => {
         <div className="sidebar-content">
           {/* Estatísticas */}
           <section className="stats-section">
-            <h2>Estatísticas</h2>
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-number">{stats.total}</div>
-                <div className="stat-label">Total</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.read}</div>
-                <div className="stat-label">Lidos</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.reading}</div>
-                <div className="stat-label">Lendo</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.wantToRead}</div>
-                <div className="stat-label">Quero Ler</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.favorites}</div>
-                <div className="stat-label">Favoritos</div>
-              </div>
-            </div>
+            <StatisticsCharts stats={stats} />
           </section>
 
           {/* Busca */}

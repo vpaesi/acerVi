@@ -207,6 +207,10 @@ export class PersonalLibraryService {
       abandoned: books.filter(b => b.status === 'abandonado').length,
       favorites: books.filter(b => b.favorite).length,
       loaned: books.filter(b => b.loanedTo).length,
+      // Estatísticas de condição
+      new: books.filter(b => b.condition === 'novo').length,
+      used: books.filter(b => b.condition === 'usado' || b.condition === 'seminovo').length,
+      damaged: books.filter(b => b.condition === 'danificado').length,
       averageRating: 0,
       totalPages: 0,
       readPages: 0,

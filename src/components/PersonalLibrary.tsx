@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { usePersonalLibrary } from '../hooks/usePersonalLibrary';
 import { BookSearchModal } from './BookSearchModal';
 import { BookshelfView } from './BookshelfView';
-import { EditBookModal } from './EditBookModal';
+import { StatisticsCharts } from './StatisticsCharts';
 import { BookDetailsModal } from './BookDetailsModal';
+import { EditBookModal } from './EditBookModal';
 import { PersonalBook } from '../types/personalLibrary';
 import { loadSampleData } from '../data/sampleBooks';
 import { getMainCategories } from '../services/cduService';
+import { formatStatus } from '../utils/formatStatus';
 import './PersonalLibrarySidebar.css';
 
 export const PersonalLibrary: React.FC = () => {
@@ -154,29 +156,7 @@ export const PersonalLibrary: React.FC = () => {
         <div className="sidebar-content">
           {/* Estatísticas */}
           <section className="stats-section">
-            <h2>Estatísticas</h2>
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-number">{stats.total}</div>
-                <div className="stat-label">Total</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.read}</div>
-                <div className="stat-label">Lidos</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.reading}</div>
-                <div className="stat-label">Lendo</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.wantToRead}</div>
-                <div className="stat-label">Quero Ler</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number">{stats.favorites}</div>
-                <div className="stat-label">Favoritos</div>
-              </div>
-            </div>
+            <StatisticsCharts stats={stats} />
           </section>
 
           {/* Busca */}
@@ -370,7 +350,7 @@ export const PersonalLibrary: React.FC = () => {
                         }}
                         title={book.favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
                       >
-                        ⭐
+                        {book.favorite ? '⭐' : '☆'}
                       </button>
                       <button
                         className="edit-btn"
@@ -401,7 +381,7 @@ export const PersonalLibrary: React.FC = () => {
                       
                       <div className="book-meta">
                         <span className={`status-badge status-${book.status}`}>
-                          {book.status}
+                          {formatStatus(book.status)}
                         </span>
                         
                         {book.cduCode && (
