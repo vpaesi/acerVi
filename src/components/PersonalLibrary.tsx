@@ -5,6 +5,7 @@ import { BookshelfView } from './BookshelfView';
 import { StatisticsCharts } from './StatisticsCharts';
 import { BookDetailsModal } from './BookDetailsModal';
 import { EditBookModal } from './EditBookModal';
+import { Footer } from './Footer';
 import { PersonalBook } from '../types/personalLibrary';
 import { loadSampleData } from '../data/sampleBooks';
 import { getMainCategories } from '../services/cduService';
@@ -436,6 +437,9 @@ export const PersonalLibrary: React.FC = () => {
             )
           )}
         </div>
+
+        {/* Footer */}
+        <Footer />
       </main>
 
       {/* Modal de busca */}
