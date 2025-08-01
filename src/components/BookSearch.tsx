@@ -34,7 +34,6 @@ export const BookSearch: React.FC<BookSearchProps> = ({
     setError(null);
     setHasSearched(true);
 
-    // Se é uma nova busca (página 1), resetar página atual
     if (page === 1) {
       setCurrentPage(1);
     }
@@ -76,11 +75,10 @@ export const BookSearch: React.FC<BookSearchProps> = ({
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleSearch(1); // Sempre buscar da primeira página em nova busca
+      handleSearch(1);
     }
   };
 
-  // Funções de navegação de páginas
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages && page !== currentPage) {
       handleSearch(page);
@@ -148,7 +146,6 @@ export const BookSearch: React.FC<BookSearchProps> = ({
           </div>
         )}
 
-        {/* Controles de paginação */}
         {totalPages > 1 && hasSearched && (
           <div className="pagination">
             <button 

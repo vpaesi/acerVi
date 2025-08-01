@@ -55,7 +55,6 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
   return (
     <div className="modal-backdrop" onClick={handleBackdropClick}>
       <div className="book-details-modal">
-        {/* Header do Modal */}
         <div className="modal-header">
           <div className="modal-title">
             <h2>📖 Ficha Catalográfica</h2>
@@ -86,9 +85,7 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
           </div>
         </div>
 
-        {/* Conteúdo do Modal */}
         <div className="modal-content">
-          {/* Seção Principal */}
           <div className="catalog-section main-info">
             <div className="book-cover-section">
               {book.imageUrl ? (
@@ -107,7 +104,6 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
                 </div>
               )}
               
-              {/* Status e Ações Rápidas */}
               <div className="quick-actions">
                 <select
                   value={book.status}
@@ -201,6 +197,17 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
                 </div>
               )}
 
+              {/* MARC21 490 - Série */}
+              {book.series && (
+                <div className="marc-field">
+                  <span className="marc-tag">490</span>
+                  <span className="marc-content">
+                    $a {book.series}{book.volumeNumber ? ` ; $v ${book.volumeNumber}` : ''}
+                  </span>
+                  <span className="marc-description">Série</span>
+                </div>
+              )}
+
               {/* MARC21 520 - Sumário/Resumo */}
               {book.description && (
                 <div className="marc-field description-field">
@@ -236,7 +243,6 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
             </div>
           </div>
 
-          {/* Informações do Acervo Pessoal */}
           <div className="catalog-section personal-info">
             <h3>📋 Informações do Acervo Pessoal</h3>
             
@@ -300,7 +306,6 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
             )}
           </div>
 
-          {/* Informações Técnicas */}
           <div className="catalog-section technical-info">
             <h3>🔧 Informações Técnicas de Catalogação</h3>
             
@@ -334,7 +339,6 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
           </div>
         </div>
 
-        {/* Footer do Modal */}
         <div className="modal-footer">
           <button
             className="remove-btn"

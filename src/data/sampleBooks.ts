@@ -111,7 +111,6 @@ export const sampleBooks: PersonalBook[] = [
   }
 ];
 
-// Função para carregar dados de exemplo (apenas se não houver dados)
 export const loadSampleData = () => {
   const existingData = localStorage.getItem('acervi_personal_library');
   if (!existingData || JSON.parse(existingData).length === 0) {

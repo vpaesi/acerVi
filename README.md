@@ -27,15 +27,18 @@ O **AcerVi** é uma aplicação web moderna desenvolvida para bibliotecários e 
 ## ✨ **Funcionalidades**
 
 ### 📋 **Gestão Profissional do Acervo**
-- ✅ **Sistema CDU (Classificação Decimal Universal)** completo
+- ✅ **Sistema CDU (Classificação Decimal Universal)**
 - ✅ **Códigos Cutter** para catalogação precisa
 - ✅ **Números de chamada** automatizados
 - ✅ **Status de leitura** (Não Lido, Lendo, Lido, Quero Ler, Abandonado)
 - ✅ **Controle de condição física** (Novo, Seminovo, Usado, Danificado)
 - ✅ **Localização física** detalhada (estante, prateleira, posição)
 - ✅ **Sistema de favoritos** e avaliações
-- ✅ **Controle de empréstimos** com histórico
+- ✅ **Campos de série** e número do volume
+- ✅ **Campo de edição** (Ilustrada, Colecionador, etc.)
+- ✅ **Informações de compra** (data, preço, local)
 - ✅ **Notas pessoais** e comentários
+- ✅ **Modal de edição centralizado** para controle completo
 
 ### 🔍 **Descoberta e Adição de Livros**
 - 📚 **Integração Google Books API** com paginação
@@ -57,6 +60,9 @@ O **AcerVi** é uma aplicação web moderna desenvolvida para bibliotecários e 
 - 🎪 **Modo estante virtual** para visualização imersiva
 - ⚡ **Interações fluidas** com transições suaves
 - 🌈 **Sistema de cores** intuitivo por status
+- 🎛️ **Controles centralizados** no modal de edição
+- 🔘 **Botão toggle** para filtro de favoritos
+- 🗑️ **Ações de edição** organizadas e intuitivas
 
 ## 🛠️ **Instalação**
 
@@ -120,7 +126,7 @@ src/
 3. **Defina localizações físicas** das suas estantes
 
 ### **2. Adicionando Livros**
-1. **Clique em "📚 Pesquisar por Novas Leituras"**
+1. **Clique em "📚 Adicionar Livro"**
 2. **Busque na Google Books API** por título/autor
 3. **Preencha informações profissionais** (CDU, localização, condição)
 4. **Adicione ao seu acervo** com classificação completa
@@ -214,10 +220,6 @@ npm run deploy
 3. **Commit suas mudanças** (`git commit -m 'feat: adiciona nova funcionalidade'`)
 4. **Push para a branch** (`git push origin feature/nova-funcionalidade`)
 5. **Abra um Pull Request**
-
-## 📄 **Licença**
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
 
 ## 👥 **Autores**
 

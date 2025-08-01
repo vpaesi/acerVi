@@ -7,6 +7,7 @@ interface EditBookModalProps {
   book: PersonalBook | null;
   onClose: () => void;
   onSave: (id: string, updates: Partial<PersonalBook>) => void;
+  onRemove: (id: string) => void;
 }
 
 export const EditBookModal: React.FC<EditBookModalProps> = ({
@@ -14,6 +15,7 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
   book,
   onClose,
   onSave,
+  onRemove,
 }) => {
   const [formData, setFormData] = useState<Partial<PersonalBook>>({});
   const [primaryCDU, setPrimaryCDU] = useState('');
@@ -27,6 +29,7 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
         publishedDate: book.publishedDate,
         isbn: book.isbn,
         pageCount: book.pageCount,
+        edition: book.edition,
         description: book.description,
         status: book.status,
         condition: book.condition,
@@ -35,6 +38,8 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
         cduCode: book.cduCode,
         cutterCode: book.cutterCode,
         callNumber: book.callNumber,
+        series: book.series,
+        volumeNumber: book.volumeNumber,
         physicalLocation: book.physicalLocation,
         personalNotes: book.personalNotes,
         purchaseDate: book.purchaseDate,
@@ -42,7 +47,6 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
         imageUrl: book.imageUrl,
       });
 
-      // Define o CDU primário baseado no código CDU atual
       if (book.cduCode) {
         const primaryCode = book.cduCode.charAt(0);
         setPrimaryCDU(primaryCode);
@@ -56,7 +60,6 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
     e.preventDefault();
     if (!book) return;
 
-    // Atualizar código Cutter se CDU mudou
     let updatedData = { ...formData };
     if (formData.cduCode && formData.cduCode !== book.cduCode) {
       const cutterCode = generateCutter(formData.authors?.[0] || '', formData.title || '');
@@ -84,10 +87,18 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
     }));
   };
 
-  // Função para lidar com a mudança do CDU primário (0-9)
+  const handleCutterChange = (cutterCode: string) => {
+    const callNumber = formData.cduCode && cutterCode ? `${formData.cduCode} ${cutterCode}` : '';
+    
+    setFormData(prev => ({
+      ...prev,
+      cutterCode,
+      callNumber,
+    }));
+  };
+
   const handlePrimaryCDUChange = (primaryCode: string) => {
     setPrimaryCDU(primaryCode);
-    // Limpa o CDU específico quando muda a categoria principal
     setFormData(prev => ({
       ...prev,
       cduCode: '',
@@ -113,9 +124,8 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
 
         <form onSubmit={handleSubmit} className="edit-form">
           <div className="form-grid">
-            {/* Informações básicas */}
             <div className="form-section">
-              <h3>Informações Básicas</h3>
+              <h3>Ficha catalográfica</h3>
               
               <div className="form-group">
                 <label>Título *</label>
@@ -174,6 +184,16 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
                     onChange={(e) => setFormData(prev => ({ ...prev, pageCount: parseInt(e.target.value) || undefined }))}
                   />
                 </div>
+
+                <div className="form-group">
+                  <label>Edição</label>
+                  <input
+                    type="text"
+                    value={formData.edition || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, edition: e.target.value }))}
+                    placeholder="Ex: Ilustrada, Colecionador, Revisada"
+                  />
+                </div>
               </div>
 
               <div className="form-group">
@@ -193,12 +213,7 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
                   onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
                 />
               </div>
-            </div>
 
-            {/* Catalogação */}
-            <div className="form-section">
-              <h3>Catalogação Bibliotecária</h3>
-              
               <div className="form-row">
                 <div className="form-group">
                   <label>Categoria Principal CDU</label>
@@ -240,10 +255,13 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
                   <input
                     type="text"
                     value={formData.cutterCode || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, cutterCode: e.target.value }))}
-                    readOnly
-                    className="readonly"
+                    onChange={(e) => handleCutterChange(e.target.value)}
+                    placeholder="Gerado automaticamente"
                   />
+                  <p className="field-hint">
+                    <strong>Dica:</strong> Além do código gerado automaticamente, adicione a primeira letra do título (desconsiderando artigos como "A", "O", "Um", "Uma", etc.). 
+                    Por exemplo: para "O Senhor dos Anéis", use a letra "S".
+                  </p>
                 </div>
 
                 <div className="form-group">
@@ -258,20 +276,32 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Localização Física</label>
-                <input
-                  type="text"
-                  value={formData.physicalLocation || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, physicalLocation: e.target.value }))}
-                  placeholder="Ex: Sala de Psicologia, Estante C, Prateleira 1"
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Série Relacionada</label>
+                  <input
+                    type="text"
+                    value={formData.series || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, series: e.target.value }))}
+                    placeholder="Ex: Harry Potter, Senhor dos Anéis"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Número do Volume</label>
+                  <input
+                    type="text"
+                    value={formData.volumeNumber || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, volumeNumber: e.target.value }))}
+                    placeholder="Ex: v. 1, Livro 2, Parte III"
+                  />
+                </div>
               </div>
+
             </div>
 
-            {/* Status e Condição */}
             <div className="form-section">
-              <h3>Status e Condição</h3>
+              <h3>Status, Condição e Compra</h3>
               
               <div className="form-row">
                 <div className="form-group">
@@ -327,12 +357,17 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
                   Marcar como favorito
                 </label>
               </div>
-            </div>
 
-            {/* Informações de Compra */}
-            <div className="form-section">
-              <h3>Informações de Compra</h3>
-              
+              <div className="form-group">
+                <label>Localização Física</label>
+                <input
+                  type="text"
+                  value={formData.physicalLocation || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, physicalLocation: e.target.value }))}
+                  placeholder="Ex: Sala de Psicologia, Estante C, Prateleira 1"
+                />
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Data da Compra</label>
@@ -366,7 +401,6 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
               </div>
             </div>
 
-            {/* Notas Pessoais */}
             <div className="form-section full-width">
               <h3>Notas Pessoais</h3>
               
@@ -383,12 +417,26 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
           </div>
 
           <div className="form-actions">
-            <button type="button" onClick={onClose} className="cancel-button">
-              Cancelar
+            <button 
+              type="button" 
+              onClick={() => {
+                if (window.confirm('Tem certeza que deseja remover este livro do seu acervo?')) {
+                  onRemove(book.id);
+                  onClose();
+                }
+              }}
+              className="remove-button"
+            >
+              🗑️ Remover do Acervo
             </button>
-            <button type="submit" className="save-button">
-              Salvar Alterações
-            </button>
+            <div className="action-buttons-right">
+              <button type="button" onClick={onClose} className="cancel-button">
+                Cancelar
+              </button>
+              <button type="submit" className="save-button">
+                Salvar Alterações
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -396,7 +444,6 @@ export const EditBookModal: React.FC<EditBookModalProps> = ({
   );
 };
 
-// Estilos CSS
 const styles = `
 .edit-book-modal {
   max-width: 900px;
@@ -493,14 +540,21 @@ const styles = `
 
 .form-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   gap: 12px;
   padding-top: 20px;
   border-top: 1px solid #e5e7eb;
 }
 
+.action-buttons-right {
+  display: flex;
+  gap: 12px;
+}
+
 .cancel-button,
-.save-button {
+.save-button,
+.remove-button {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -528,10 +582,29 @@ const styles = `
   background: #1d4ed8;
 }
 
+.remove-button {
+  background: #dc3545;
+  color: white;
+}
+
+.remove-button:hover {
+  background: #c82333;
+}
+
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .action-buttons-right {
+    order: -1;
   }
   
   .form-row {
@@ -545,7 +618,6 @@ const styles = `
 }
 `;
 
-// Injetar estilos
 if (typeof document !== 'undefined' && !document.getElementById('edit-book-modal-styles')) {
   const styleElement = document.createElement('style');
   styleElement.id = 'edit-book-modal-styles';

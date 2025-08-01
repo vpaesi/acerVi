@@ -20,13 +20,11 @@ interface UsePersonalLibraryReturn {
   };
   loading: boolean;
   
-  // Actions
   addBook: (bookData: Omit<PersonalBook, 'id' | 'addedAt' | 'updatedAt'>) => PersonalBook;
   updateBook: (id: string, updates: Partial<PersonalBook>) => PersonalBook | null;
   removeBook: (id: string) => boolean;
   getBookById: (id: string) => PersonalBook | null;
   
-  // Filters and sorting
   setFilters: (filters: {
     status?: string[];
     condition?: string[];
@@ -39,7 +37,6 @@ interface UsePersonalLibraryReturn {
   setSorting: (field: 'title' | 'authors' | 'addedAt' | 'rating' | 'publishedDate', direction?: 'asc' | 'desc') => void;
   clearFilters: () => void;
   
-  // Data management
   exportData: () => string;
   importData: (jsonData: string) => boolean;
   refreshData: () => void;
@@ -66,7 +63,6 @@ export const usePersonalLibrary = (): UsePersonalLibraryReturn => {
     direction: 'desc'
   });
 
-  // Carrega dados iniciais
   const loadData = useCallback(() => {
     setLoading(true);
     try {
@@ -79,14 +75,12 @@ export const usePersonalLibrary = (): UsePersonalLibraryReturn => {
     }
   }, []);
 
-  // Aplica filtros e ordenação
   const applyFiltersAndSorting = useCallback(() => {
     let result = PersonalLibraryService.filterBooks(books, filters);
     result = PersonalLibraryService.sortBooks(result, sorting.field, sorting.direction);
     setFilteredBooks(result);
   }, [books, filters, sorting]);
 
-  // Efeitos
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -95,7 +89,6 @@ export const usePersonalLibrary = (): UsePersonalLibraryReturn => {
     applyFiltersAndSorting();
   }, [applyFiltersAndSorting]);
 
-  // Actions
   const addBook = useCallback((bookData: Omit<PersonalBook, 'id' | 'addedAt' | 'updatedAt'>) => {
     const newBook = PersonalLibraryService.addBook(bookData);
     setBooks(prev => [...prev, newBook]);
@@ -122,7 +115,6 @@ export const usePersonalLibrary = (): UsePersonalLibraryReturn => {
     return PersonalLibraryService.getBookById(id);
   }, []);
 
-  // Filters and sorting
   const setFilters = useCallback((newFilters: typeof filters) => {
     setFiltersState(newFilters);
   }, []);
@@ -138,7 +130,6 @@ export const usePersonalLibrary = (): UsePersonalLibraryReturn => {
     setFiltersState({});
   }, []);
 
-  // Data management
   const exportData = useCallback(() => {
     return PersonalLibraryService.exportData();
   }, []);
@@ -155,7 +146,6 @@ export const usePersonalLibrary = (): UsePersonalLibraryReturn => {
     loadData();
   }, [loadData]);
 
-  // Calcula estatísticas
   const stats = PersonalLibraryService.getLibraryStats(books);
 
   return {

@@ -116,7 +116,7 @@ export const useGoogleBooks = (): UseGoogleBooksReturn => {
     async (id: string): Promise<Book | null> => {
       return handleApiCall(
         () => GoogleBooksService.getBookById(id),
-        () => {} // Não atualiza a lista de livros para busca individual
+        () => {}
       );
     },
     [handleApiCall]

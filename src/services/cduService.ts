@@ -5,7 +5,6 @@ export interface CDUClassification {
 }
 
 export const CDU_CLASSIFICATIONS: CDUClassification[] = [
-  // 0 - Generalidades
   { code: '0', description: 'Generalidades' },
   { code: '00', description: 'Ciência e conhecimento. Organização. Informática. Documentação' },
   { code: '001', description: 'Ciência e conhecimento em geral' },
@@ -20,7 +19,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '08', description: 'Coletâneas' },
   { code: '09', description: 'Manuscritos. Livros raros' },
 
-  // 1 - Filosofia e Psicologia
   { code: '1', description: 'Filosofia e Psicologia' },
   { code: '11', description: 'Metafísica' },
   { code: '13', description: 'Filosofia mental. Metafísica da vida espiritual' },
@@ -31,7 +29,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '18', description: 'Filosofia antiga e medieval' },
   { code: '19', description: 'Filosofia moderna' },
 
-  // 2 - Religião
   { code: '2', description: 'Religião' },
   { code: '21', description: 'Teologia natural' },
   { code: '22', description: 'Bíblia' },
@@ -43,7 +40,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '28', description: 'Igrejas cristãs, seitas, denominações' },
   { code: '29', description: 'Religiões não-cristãs' },
 
-  // 3 - Ciências Sociais
   { code: '3', description: 'Ciências Sociais' },
   { code: '30', description: 'Teoria e métodos das ciências sociais' },
   { code: '31', description: 'Demografia. Sociologia. Estatística' },
@@ -55,7 +51,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '37', description: 'Educação' },
   { code: '39', description: 'Etnografia. Etnologia. Usos e costumes' },
 
-  // 4 - Linguística
   { code: '4', description: 'Linguística' },
   { code: '40', description: 'Questões gerais relativas a duas ou mais línguas' },
   { code: '41', description: 'Linguística' },
@@ -69,7 +64,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '48', description: 'Grego clássico' },
   { code: '49', description: 'Outras línguas' },
 
-  // 5 - Ciências Puras
   { code: '5', description: 'Ciências Exatas e Naturais' },
   { code: '50', description: 'Generalidades sobre as ciências puras' },
   { code: '51', description: 'Matemática' },
@@ -82,7 +76,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '58', description: 'Botânica' },
   { code: '59', description: 'Zoologia' },
 
-  // 6 - Ciências Aplicadas
   { code: '6', description: 'Ciências Aplicadas. Medicina. Tecnologia' },
   { code: '60', description: 'Biotecnologia' },
   { code: '61', description: 'Medicina' },
@@ -95,7 +88,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '68', description: 'Indústrias, ofícios e comércios' },
   { code: '69', description: 'Construção civil' },
 
-  // 7 - Arte
   { code: '7', description: 'Arte. Recreação. Espetáculos. Desportos' },
   { code: '70', description: 'Arte em geral' },
   { code: '71', description: 'Urbanismo' },
@@ -108,7 +100,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '78', description: 'Música' },
   { code: '79', description: 'Diversões. Espetáculos. Jogos. Desportos' },
 
-  // 8 - Literatura
   { code: '8', description: 'Linguística. Filologia. Literatura' },
   { code: '80', description: 'Questões gerais da linguística e literatura' },
   { code: '81', description: 'Linguística' },
@@ -134,7 +125,6 @@ export const CDU_CLASSIFICATIONS: CDUClassification[] = [
   { code: '821.134.2', description: 'Literatura espanhola' },
   { code: '821.112.2', description: 'Literatura alemã' },
 
-  // 9 - História e Geografia
   { code: '9', description: 'Geografia. Biografia. História' },
   { code: '90', description: 'Arqueologia. Pré-história' },
   { code: '91', description: 'Geografia' },
@@ -161,12 +151,10 @@ export const getMainCategories = (): CDUClassification[] => {
   return CDU_CLASSIFICATIONS.filter(cdu => cdu.code.length === 1);
 };
 
-// Função para obter apenas os códigos principais (0-9)
 export const getPrimaryCategories = (): CDUClassification[] => {
   return CDU_CLASSIFICATIONS.filter(cdu => cdu.code.length === 1);
 };
 
-// Função para obter subcategorias baseadas no código principal selecionado
 export const getSubcategoriesByPrimary = (primaryCode: string): CDUClassification[] => {
   if (!primaryCode) return [];
   return CDU_CLASSIFICATIONS.filter(cdu => 
@@ -174,13 +162,11 @@ export const getSubcategoriesByPrimary = (primaryCode: string): CDUClassificatio
   );
 };
 
-// Função para gerar código Cutter baseada na tabela Cutter-Sanborn
 export const generateCutter = (author: string, title: string): string => {
   if (!author || author.length === 0) {
     return generateCutterFromTitle(title);
   }
   
-  // Pega o último sobrenome do autor
   const authorParts = author.trim().split(' ');
   const lastName = authorParts[authorParts.length - 1];
   
@@ -188,7 +174,6 @@ export const generateCutter = (author: string, title: string): string => {
     return generateCutterFromTitle(title);
   }
   
-  // Remove acentos e converte para maiúsculo
   const normalizedLastName = lastName
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -197,14 +182,12 @@ export const generateCutter = (author: string, title: string): string => {
   return generateCutterCode(normalizedLastName);
 };
 
-// Tabela Cutter-Sanborn simplificada para gerar códigos corretos
 const generateCutterCode = (name: string): string => {
   if (!name || name.length === 0) return 'A001';
   
   const firstLetter = name.charAt(0);
   const restOfName = name.substring(1);
   
-  // Tabela Cutter baseada na posição alfabética das segundas letras
   const cutterTable: { [key: string]: { [key: string]: number } } = {
     'A': { 'A': 2, 'B': 3, 'C': 4, 'D': 5, 'E': 6, 'F': 7, 'G': 8, 'H': 9, 'I': 10, 'J': 11, 'K': 12, 'L': 13, 'M': 14, 'N': 15, 'O': 16, 'P': 17, 'Q': 18, 'R': 19, 'S': 20, 'T': 21, 'U': 22, 'V': 23, 'W': 24, 'X': 25, 'Y': 26, 'Z': 27 },
     'B': { 'A': 3, 'E': 4, 'I': 6, 'L': 7, 'O': 8, 'R': 9, 'U': 10, 'Y': 11 },
@@ -245,11 +228,9 @@ const generateCutterCode = (name: string): string => {
     return `${firstLetter}1`;
   }
   
-  // Busca o número base para a segunda letra
   let baseNumber = letterTable[secondLetter];
   
   if (!baseNumber) {
-    // Se não encontrar a segunda letra exata, busca a mais próxima
     const letters = Object.keys(letterTable).sort();
     for (const letter of letters) {
       if (letter >= secondLetter) {
@@ -262,15 +243,13 @@ const generateCutterCode = (name: string): string => {
     }
   }
   
-  // Adiciona refinamento baseado na terceira letra se existir
   let finalNumber = baseNumber;
   if (restOfName.length > 1) {
     const thirdLetter = restOfName.charAt(1);
-    const thirdLetterValue = thirdLetter.charCodeAt(0) - 65; // A=0, B=1, etc.
+    const thirdLetterValue = thirdLetter.charCodeAt(0) - 65;
     finalNumber = baseNumber * 10 + Math.floor(thirdLetterValue / 3);
   }
   
-  // Para "Gaiman", seria G + AI = G + 1 (posição de AI) = G14 + refinamento = G141
   if (name === 'GAIMAN') {
     return 'G141';
   }
@@ -281,7 +260,6 @@ const generateCutterCode = (name: string): string => {
 const generateCutterFromTitle = (title: string): string => {
   if (!title || title.length === 0) return 'A001';
   
-  // Remove artigos e palavras comuns do início
   const commonWords = ['o', 'a', 'os', 'as', 'um', 'uma', 'the', 'a', 'an'];
   const titleWords = title.toLowerCase().split(' ');
   let mainWord = titleWords[0];

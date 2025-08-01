@@ -12,10 +12,8 @@ export class GoogleBooksService {
     try {
       const searchParams = new URLSearchParams();
       
-      // Parâmetro obrigatório
       searchParams.append('q', params.query);
       
-      // Parâmetros opcionais
       if (params.maxResults) {
         searchParams.append('maxResults', params.maxResults.toString());
       }

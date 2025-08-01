@@ -22,46 +22,42 @@ interface StatisticsChartsProps {
 }
 
 const READING_STATUS_COLORS = [
-  '#22c55e', // Verde - Lidos
-  '#3b82f6', // Azul - Lendo
-  '#f59e0b', // Amarelo - Quero Ler
-  '#6b7280', // Cinza - Não Lido
-  '#ef4444', // Vermelho - Abandonado
+  '#22c55e',
+  '#3b82f6',
+  '#f59e0b',
+  '#6b7280',
+  '#ef4444',
 ];
 
 const CONDITION_COLORS = [
-  '#10b981', // Verde - Novo
-  '#3b82f6', // Azul - Seminovo
-  '#f59e0b', // Amarelo - Usado
-  '#ef4444', // Vermelho - Danificado
+  '#10b981',
+  '#3b82f6',
+  '#f59e0b',
+  '#ef4444',
 ];
 
 export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  // Dados para o gráfico de status de leitura
   const readingStatusData = [
     { name: 'Lidos', value: stats.read, color: READING_STATUS_COLORS[0] },
     { name: 'Lendo', value: stats.reading, color: READING_STATUS_COLORS[1] },
     { name: 'Quero Ler', value: stats.wantToRead, color: READING_STATUS_COLORS[2] },
     { name: 'Não Lido', value: stats.notRead, color: READING_STATUS_COLORS[3] },
     { name: 'Abandonado', value: stats.abandoned, color: READING_STATUS_COLORS[4] },
-  ].filter(item => item.value > 0); // Remove categorias com valor 0
+  ].filter(item => item.value > 0);
 
-  // Dados para o gráfico de condição dos livros
   const conditionData = [
     { name: 'Novo', value: stats.new || 0, color: CONDITION_COLORS[0] },
-    { name: 'Seminovo', value: Math.floor((stats.used || 0) * 0.7), color: CONDITION_COLORS[1] }, // Estimativa
-    { name: 'Usado', value: Math.floor((stats.used || 0) * 0.3), color: CONDITION_COLORS[2] }, // Estimativa
+    { name: 'Seminovo', value: Math.floor((stats.used || 0) * 0.7), color: CONDITION_COLORS[1] },
+    { name: 'Usado', value: Math.floor((stats.used || 0) * 0.3), color: CONDITION_COLORS[2] },
     { name: 'Danificado', value: stats.damaged || 0, color: CONDITION_COLORS[3] },
   ].filter(item => (item.value || 0) > 0);
 
-  // Componente customizado para renderizar células com cores específicas
   const renderCustomizedCell = (entry: { color?: string }, index: number, colors: string[]) => {
     return <Cell key={`cell-${index}`} fill={entry.color || colors[index % colors.length]} />;
   };
 
-  // Tooltip customizado
   const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0];
@@ -103,7 +99,6 @@ export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => 
 
   return (
     <div className="statistics-charts">
-      {/* Header sempre visível com resumo */}
       <div className="stats-header" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="stats-summary">
           <div className="total-books-compact">
@@ -130,7 +125,6 @@ export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => 
         </div>
       </div>
 
-      {/* Conteúdo dos gráficos - colapsável */}
       {isExpanded && (
         <div className="charts-content">
           <div className="chart-summary">
@@ -140,7 +134,6 @@ export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => 
             </div>
           </div>
 
-          {/* Gráfico de Status de Leitura */}
           <div className="chart-container">
             <h3 className="chart-title">Status de Leitura</h3>
             <ResponsiveContainer width="100%" height={250}>
@@ -164,7 +157,6 @@ export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => 
             </ResponsiveContainer>
           </div>
 
-          {/* Gráfico de Condição dos Livros */}
           {conditionData.length > 0 && (
             <div className="chart-container">
               <h3 className="chart-title">Condição dos Livros</h3>
@@ -190,7 +182,6 @@ export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => 
             </div>
           )}
 
-          {/* Estatísticas detalhadas */}
           <div className="quick-stats">
             <div className="quick-stat-item">
               <span className="stat-icon">⭐</span>

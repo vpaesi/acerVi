@@ -33,6 +33,9 @@ export const BookSearchModal: React.FC<BookSearchModalProps> = ({
     favorite?: boolean;
     cduCode?: string;
     cutterCode?: string;
+    series?: string;
+    volumeNumber?: string;
+    edition?: string;
   }) => {
     if (!selectedBook) return;
 
@@ -46,11 +49,14 @@ export const BookSearchModal: React.FC<BookSearchModalProps> = ({
       publisher: volumeInfo.publisher,
       publishedDate: volumeInfo.publishedDate,
       pageCount: volumeInfo.pageCount,
+      edition: formData.edition,
       description: volumeInfo.description,
       imageUrl: volumeInfo.imageLinks?.thumbnail || volumeInfo.imageLinks?.smallThumbnail,
       categories: volumeInfo.categories,
       callNumber: formData.cduCode && formData.cutterCode ? 
         `${formData.cduCode} ${formData.cutterCode}` : undefined,
+      series: formData.series,
+      volumeNumber: formData.volumeNumber,
       ...formData,
     };
 
@@ -70,7 +76,7 @@ export const BookSearchModal: React.FC<BookSearchModalProps> = ({
     <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Pesquisar por Novas Leituras</h2>
+          <h2>Adicionar Livro</h2>
           <button className="close-button" onClick={handleClose}>
             ×
           </button>
@@ -125,9 +131,11 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
     favorite: false,
     cduCode: '',
     cutterCode: '',
+    series: '',
+    volumeNumber: '',
+    edition: '',
   });
 
-  // Gera automaticamente o código Cutter quando o CDU é selecionado
   const handleCDUChange = (cduCode: string) => {
     const authorName = book.volumeInfo.authors?.[0] || '';
     const cutterCode = generateCutter(authorName, book.volumeInfo.title);
@@ -139,14 +147,15 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
     }));
   };
 
-  // Função para lidar com a mudança do CDU primário (0-9)
   const handlePrimaryCDUChange = (primaryCode: string) => {
     setPrimaryCDU(primaryCode);
-    // Limpa o CDU específico quando muda a categoria principal
     setFormData(prev => ({
       ...prev,
       cduCode: '',
-      cutterCode: ''
+      cutterCode: '',
+      series: '',
+      volumeNumber: '',
+      edition: ''
     }));
   };
 
@@ -265,6 +274,9 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
               placeholder="Gerado automaticamente"
               title={`Gerado com base no autor: ${book.volumeInfo.authors?.[0] || 'N/A'}`}
             />
+            <p className="field-hint">
+              <strong>Dica:</strong> Além do código gerado automaticamente, adicione a primeira letra do título (desconsiderando artigos como "A", "O", "Um", "Uma", etc.). Por exemplo: para "O Senhor dos Anéis", use a letra "S".
+            </p>
           </div>
         </div>
 
@@ -282,7 +294,53 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
               placeholder="Ex: Sala 1, Estante A, Prateleira 2"
             />
           </div>
+        </div>
 
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="series">Série Relacionada (490 MARC21)</label>
+            <input
+              type="text"
+              id="series"
+              value={formData.series}
+              onChange={(e) => setFormData(prev => ({ 
+                ...prev, 
+                series: e.target.value 
+              }))}
+              placeholder="Ex: Harry Potter, Senhor dos Anéis"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="volumeNumber">Número do Volume</label>
+            <input
+              type="text"
+              id="volumeNumber"
+              value={formData.volumeNumber}
+              onChange={(e) => setFormData(prev => ({ 
+                ...prev, 
+                volumeNumber: e.target.value 
+              }))}
+              placeholder="Ex: v. 1, Livro 2, Parte III"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="edition">Edição</label>
+            <input
+              type="text"
+              id="edition"
+              value={formData.edition}
+              onChange={(e) => setFormData(prev => ({ 
+                ...prev, 
+                edition: e.target.value 
+              }))}
+              placeholder="Ex: Ilustrada, Colecionador, Revisada"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
           <div className="form-group">
             <label htmlFor="rating">Avaliação (1-5 estrelas)</label>
             <select

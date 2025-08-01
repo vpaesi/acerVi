@@ -6,28 +6,28 @@ export interface PersonalBook {
   publisher?: string;
   publishedDate?: string;
   pageCount?: number;
+  edition?: string; 
   description?: string;
   imageUrl?: string;
   categories?: string[];
   
-  // Classificação bibliotecária
-  cduCode?: string; // Código CDU (ex: "821.111-73")
-  cutterCode?: string; // Código Cutter (ex: "A123")
-  callNumber?: string; // Número de chamada completo (CDU + Cutter)
+  cduCode?: string;
+  cutterCode?: string;
+  callNumber?: string;
+  series?: string;
+  volumeNumber?: string;
   
-  // Informações específicas do acervo pessoal
   status: 'não-lido' | 'lendo' | 'lido' | 'abandonado' | 'quero-ler';
-  rating?: number; // 1-5 estrelas
+  rating?: number;
   personalNotes?: string;
   purchaseDate?: string;
   purchasePrice?: number;
   condition: 'novo' | 'seminovo' | 'usado' | 'danificado';
-  physicalLocation?: string; // localização física real (ex: "Sala 1, Estante A, Prateleira 2")
+  physicalLocation?: string;
   favorite?: boolean;
-  loanedTo?: string; // nome da pessoa se emprestado
+  loanedTo?: string;
   loanDate?: string;
   
-  // Timestamps
   addedAt: string;
   updatedAt: string;
 }
@@ -48,8 +48,8 @@ export interface BookFilters {
   categories?: string[];
   rating?: number[];
   searchText?: string;
-  cduCode?: string[]; // Filtro por código CDU
-  cduMainCategory?: string; // Filtro por categoria principal CDU (0-9)
+  cduCode?: string[];
+  cduMainCategory?: string;
 }
 
 export interface BookSortOptions {

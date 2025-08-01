@@ -5,6 +5,6 @@
  */
 export const formatStatus = (status: string): string => {
   return status
-    .replace(/-/g, ' ') // Remove hífens
-    .replace(/^\w/, (c) => c.toUpperCase()); // Primeira letra maiúscula
+    // .replace(/-/g, ' ') 
+    .replace(/^\w/, (c) => c.toUpperCase());
 };

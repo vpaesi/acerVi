@@ -75,7 +75,7 @@ export class PersonalLibraryService {
     const filteredBooks = books.filter(book => book.id !== id);
     
     if (filteredBooks.length === books.length) {
-      return false; // Livro não encontrado
+      return false;
     }
 
     this.saveBooks(filteredBooks);
@@ -103,37 +103,30 @@ export class PersonalLibraryService {
     cduMainCategory?: string;
   }): PersonalBook[] {
     return books.filter(book => {
-      // Filtro por status
       if (filters.status && filters.status.length > 0) {
         if (!filters.status.includes(book.status)) return false;
       }
 
-      // Filtro por condição
       if (filters.condition && filters.condition.length > 0) {
         if (!filters.condition.includes(book.condition)) return false;
       }
 
-      // Filtro por favoritos
       if (filters.favorite !== undefined) {
         if (book.favorite !== filters.favorite) return false;
       }
 
-      // Filtro por rating
       if (filters.rating && filters.rating.length > 0) {
         if (!book.rating || !filters.rating.includes(book.rating)) return false;
       }
 
-      // Filtro por código CDU específico
       if (filters.cduCode && filters.cduCode.length > 0) {
         if (!book.cduCode || !filters.cduCode.includes(book.cduCode)) return false;
       }
 
-      // Filtro por categoria principal CDU
       if (filters.cduMainCategory) {
         if (!book.cduCode || !book.cduCode.startsWith(filters.cduMainCategory)) return false;
       }
 
-      // Filtro por texto (título, autor, descrição, CDU)
       if (filters.searchText) {
         const searchLower = filters.searchText.toLowerCase();
         const titleMatch = book.title.toLowerCase().includes(searchLower);
@@ -207,7 +200,6 @@ export class PersonalLibraryService {
       abandoned: books.filter(b => b.status === 'abandonado').length,
       favorites: books.filter(b => b.favorite).length,
       loaned: books.filter(b => b.loanedTo).length,
-      // Estatísticas de condição
       new: books.filter(b => b.condition === 'novo').length,
       used: books.filter(b => b.condition === 'usado' || b.condition === 'seminovo').length,
       damaged: books.filter(b => b.condition === 'danificado').length,
@@ -216,13 +208,11 @@ export class PersonalLibraryService {
       readPages: 0,
     };
 
-    // Calcula média de avaliações
     const ratedBooks = books.filter(b => b.rating);
     if (ratedBooks.length > 0) {
       stats.averageRating = ratedBooks.reduce((sum, b) => sum + (b.rating || 0), 0) / ratedBooks.length;
     }
 
-    // Calcula páginas totais e lidas
     stats.totalPages = books.reduce((sum, b) => sum + (b.pageCount || 0), 0);
     stats.readPages = books
       .filter(b => b.status === 'lido')

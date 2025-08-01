@@ -32,7 +32,6 @@ export const PersonalLibrary: React.FC = () => {
   const [editingBook, setEditingBook] = useState<PersonalBook | null>(null);
   const [selectedBook, setSelectedBook] = useState<PersonalBook | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(() => {
-    // Lembra a preferência do usuário para o sidebar
     const savedPreference = localStorage.getItem('acervi-sidebar-open');
     return savedPreference ? JSON.parse(savedPreference) : false;
   });
@@ -45,12 +44,10 @@ export const PersonalLibrary: React.FC = () => {
   const sortField = 'addedAt' as const;
   const sortDirection = 'desc' as const;
 
-  // Salva a preferência do sidebar quando muda
   useEffect(() => {
     localStorage.setItem('acervi-sidebar-open', JSON.stringify(sidebarOpen));
   }, [sidebarOpen]);
 
-  // Aplica filtros
   const applyFilters = useCallback(() => {
     const filters: {
       searchText?: string;
@@ -70,7 +67,6 @@ export const PersonalLibrary: React.FC = () => {
     setSorting(sortField, sortDirection);
   }, [searchText, selectedStatus, selectedCondition, showFavoritesOnly, selectedCDUCategory, setFilters, setSorting, sortField, sortDirection]);
 
-  // Aplica filtros quando os valores mudam
   useEffect(() => {
     applyFilters();
   }, [applyFilters]);
@@ -99,7 +95,6 @@ export const PersonalLibrary: React.FC = () => {
   const handleEditBook = (book: PersonalBook) => {
     setEditingBook(book);
     setEditModalOpen(true);
-    // Fecha o modal de detalhes se estiver aberto
     if (detailsModalOpen) {
       setDetailsModalOpen(false);
       setSelectedBook(null);
@@ -133,7 +128,6 @@ export const PersonalLibrary: React.FC = () => {
 
   return (
     <div className="personal-library">
-      {/* Header fixo com botão do menu */}
       <header className="app-header">
         <button 
           className={`menu-toggle ${sidebarOpen ? 'active' : ''}`}
@@ -149,18 +143,14 @@ export const PersonalLibrary: React.FC = () => {
         </div>
       </header>
 
-      {/* Overlay para fechar sidebar no mobile */}
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)}></div>}
 
-      {/* Sidebar com estatísticas e controles */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-content">
-          {/* Estatísticas */}
           <section className="stats-section">
             <StatisticsCharts stats={stats} />
           </section>
 
-          {/* Busca */}
           <section className="search-section">
             <h3>Buscar</h3>
             <input
@@ -173,7 +163,6 @@ export const PersonalLibrary: React.FC = () => {
             />
           </section>
 
-          {/* Filtros */}
           <section className="filters-section">
             <h3>Filtros</h3>
             
@@ -225,18 +214,16 @@ export const PersonalLibrary: React.FC = () => {
             </div>
 
             <div className="filter-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={showFavoritesOnly}
-                  onChange={(e) => setShowFavoritesOnly(e.target.checked)}
-                />
-                Apenas favoritos
-              </label>
+              <button
+                className={`toggle-button ${showFavoritesOnly ? 'active' : ''}`}
+                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                type="button"
+              >
+                ⭐ Apenas favoritos
+              </button>
             </div>
           </section>
 
-          {/* Visualização */}
           <section className="view-section">
             <h3>Visualização</h3>
             <div className="view-mode-toggle">
@@ -255,13 +242,12 @@ export const PersonalLibrary: React.FC = () => {
             </div>
           </section>
 
-          {/* Ações */}
           <section className="actions-section">
             <button
               onClick={() => setSearchModalOpen(true)}
               className="add-book-button"
             >
-              📚 Pesquisar por Novas Leituras
+              📚 Adicionar Livro
             </button>
             
             <button
@@ -278,20 +264,21 @@ export const PersonalLibrary: React.FC = () => {
               Limpar Filtros
             </button>
 
-            <button
-              onClick={() => {
-                loadSampleData();
-                window.location.reload();
-              }}
-              className="load-sample-button"
-            >
-              Carregar Dados de Exemplo
-            </button>
+            {books.length === 0 && (
+              <button
+                onClick={() => {
+                  loadSampleData();
+                  window.location.reload();
+                }}
+                className="load-sample-button"
+              >
+                Carregar Dados de Exemplo
+              </button>
+            )}
           </section>
         </div>
       </aside>
 
-      {/* Conteúdo principal */}
       <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="books-section">
           {filteredBooks.length === 0 ? (
@@ -329,9 +316,7 @@ export const PersonalLibrary: React.FC = () => {
             viewMode === 'bookshelf' ? (
               <BookshelfView 
                 books={filteredBooks}
-                onUpdateStatus={handleUpdateStatus}
                 onToggleFavorite={handleToggleFavorite}
-                onRemove={handleRemoveBook}
               />
             ) : (
               <div className="books-grid">
@@ -380,11 +365,7 @@ export const PersonalLibrary: React.FC = () => {
                       <h3 className="book-title">{book.title}</h3>
                       <p className="book-authors">{book.authors?.join(', ')}</p>
                       
-                      <div className="book-meta">
-                        <span className={`status-badge status-${book.status}`}>
-                          {formatStatus(book.status)}
-                        </span>
-                        
+                      <div className="book-meta">                                              
                         {book.cduCode && (
                           <span className="cdu-code" title={book.description || ''}>
                             CDU: {book.cduCode}
@@ -396,40 +377,16 @@ export const PersonalLibrary: React.FC = () => {
                             Cutter: {book.cutterCode}
                           </span>
                         )}
-                      </div>
+
+                         <span className={`status-badge status-${book.status}`}>
+                          {formatStatus(book.status)}
+                        </span>
+
+                      </div>                     
                       
                       {book.personalNotes && (
                         <p className="book-notes">{book.personalNotes}</p>
                       )}
-                      
-                      <div className="book-actions">
-                        <select
-                          value={book.status}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            handleUpdateStatus(book.id, e.target.value as PersonalBook['status']);
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          className="status-select"
-                        >
-                          <option value="não-lido">Não Lido</option>
-                          <option value="quero-ler">Quero Ler</option>
-                          <option value="lendo">Lendo</option>
-                          <option value="lido">Lido</option>
-                          <option value="abandonado">Abandonado</option>
-                        </select>
-                        
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveBook(book.id);
-                          }}
-                          className="remove-button"
-                          title="Remover do acervo"
-                        >
-                          🗑️
-                        </button>
-                      </div>
                     </div>
                   </div>
                 ))}
@@ -438,26 +395,23 @@ export const PersonalLibrary: React.FC = () => {
           )}
         </div>
 
-        {/* Footer */}
         <Footer />
       </main>
 
-      {/* Modal de busca */}
       <BookSearchModal
         isOpen={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
         onAddToLibrary={handleAddBook}
       />
 
-      {/* Modal de edição */}
       <EditBookModal
         isOpen={editModalOpen}
         book={editingBook}
         onClose={handleCloseEditModal}
         onSave={handleSaveEdit}
+        onRemove={handleRemoveBook}
       />
 
-      {/* Modal de detalhes - Ficha Catalográfica */}
       <BookDetailsModal
         isOpen={detailsModalOpen}
         book={selectedBook}

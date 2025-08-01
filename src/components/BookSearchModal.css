@@ -41,7 +41,7 @@
 
 .modal-header h2 {
   margin: 0;
-  color: #212529;
+  color: #f8f9fa;
   font-size: 24px;
   font-weight: 600;
 }
@@ -50,7 +50,7 @@
   background: none;
   border: none;
   font-size: 32px;
-  color: #6c757d;
+  color: #f8f9fa;
   cursor: pointer;
   padding: 0;
   width: 40px;
@@ -195,6 +195,21 @@
 .form-group textarea {
   resize: vertical;
   min-height: 80px;
+}
+
+.field-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6c757d;
+  line-height: 1.4;
+  background-color: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #007bff;
+}
+
+.field-hint strong {
+  color: #495057;
 }
 
 .checkbox-group {
