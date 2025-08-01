@@ -193,6 +193,40 @@ src/
 - **Prettier** para formatação consistente
 - **Husky** para git hooks
 
+## 🧪 **Testes e Qualidade**
+
+### **Framework de Testes**
+- ✅ **Jest** para testes unitários e de integração
+- ✅ **Testing Library React** para testes de componentes
+- ✅ **Cobertura de código** com relatórios HTML, LCOV e JSON
+- ✅ **Mocks** configurados para localStorage, APIs e navegador
+
+### **Executar Testes**
+```bash
+# Executar todos os testes
+npm test
+
+# Executar testes com relatório de cobertura
+npm run test:coverage
+
+# Executar testes em modo watch
+npm run test:watch
+```
+
+### **Cobertura Atual**
+- **Utilities**: 100% de cobertura (formatStatus)
+- **Services**: ~31% de cobertura (CDU Service ~79%, Personal Library ~8%)  
+- **Components**: Testes básicos implementados
+- **Hooks**: Testes de inicialização implementados
+
+### **Relatório de Cobertura**
+Após executar `npm run test:coverage`, acesse:
+- **HTML**: `coverage/index.html`
+- **LCOV**: `coverage/lcov.info`
+- **JSON**: `coverage/coverage-summary.json`
+
+---
+
 ## 🚀 **Deploy**
 
 ### **Vercel (Recomendado)**

@@ -5,6 +5,6 @@
  */
 export const formatStatus = (status: string): string => {
   return status
-    // .replace(/-/g, ' ') 
+    .replace(/-/g, " ")
     .replace(/^\w/, (c) => c.toUpperCase());
 };

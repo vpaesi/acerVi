@@ -112,10 +112,16 @@ export const sampleBooks: PersonalBook[] = [
 ];
 
 export const loadSampleData = () => {
-  const existingData = localStorage.getItem('acervi_personal_library');
-  if (!existingData || JSON.parse(existingData).length === 0) {
+  try {
+    const existingData = localStorage.getItem('acervi_personal_library');
+    if (!existingData || JSON.parse(existingData).length === 0) {
+      localStorage.setItem('acervi_personal_library', JSON.stringify(sampleBooks));
+      return true;
+    }
+    return false;
+  } catch {
+    // Se houver erro (JSON inválido), carrega dados de exemplo
     localStorage.setItem('acervi_personal_library', JSON.stringify(sampleBooks));
     return true;
   }
-  return false;
 };
