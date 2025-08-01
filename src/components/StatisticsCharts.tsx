@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import './StatisticsCharts.css';
 
@@ -58,7 +58,7 @@ export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => 
     return <Cell key={`cell-${index}`} fill={entry.color || colors[index % colors.length]} />;
   };
 
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }> }) => {
+  const CustomTooltip = useCallback(({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
@@ -74,7 +74,7 @@ export const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ stats }) => 
       );
     }
     return null;
-  };
+  }, [stats.total]);
 
   if (stats.total === 0) {
     return (

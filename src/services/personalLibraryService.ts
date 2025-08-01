@@ -1,4 +1,5 @@
 import { PersonalBook } from '../types/personalLibrary';
+import { generateId } from '../utils/idUtils';
 
 const STORAGE_KEY = 'acervi_personal_library';
 
@@ -35,7 +36,7 @@ export class PersonalLibraryService {
     
     const newBook: PersonalBook = {
       ...bookData,
-      id: this.generateId(),
+      id: generateId(),
       addedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -246,10 +247,4 @@ export class PersonalLibraryService {
     }
   }
 
-  /**
-   * Gera ID único para livros
-   */
-  private static generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
 }

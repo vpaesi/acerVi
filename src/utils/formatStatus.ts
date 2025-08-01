@@ -6,5 +6,5 @@
 export const formatStatus = (status: string): string => {
   return status
     .replace(/-/g, " ")
-    .replace(/^\w/, (c) => c.toUpperCase());
+    .replace(/^./u, (c) => c.toUpperCase());
 };
