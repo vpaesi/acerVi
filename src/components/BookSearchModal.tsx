@@ -298,7 +298,7 @@ const AddToLibraryForm: React.FC<AddToLibraryFormProps> = ({
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="series">Série Relacionada (490 MARC21)</label>
+            <label htmlFor="series">Série Relacionada</label>
             <input
               type="text"
               id="series"
