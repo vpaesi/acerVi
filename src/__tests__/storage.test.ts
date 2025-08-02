@@ -1,7 +1,5 @@
-// Testes para utilitários de storage
 import { PersonalBook } from '../types/personalLibrary';
 
-// Mock do localStorage
 const localStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),
@@ -13,7 +11,6 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
-// Simular utilitários de storage
 const STORAGE_KEY = 'acervi_personal_library';
 
 const StorageUtils = {

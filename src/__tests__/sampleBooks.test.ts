@@ -1,6 +1,5 @@
-import { loadSampleData, sampleBooks } from './sampleBooks';
+import { loadSampleData, sampleBooks } from '../data/sampleBooks';
 
-// Mock do localStorage
 const mockLocalStorage = {
   getItem: jest.fn(),
   setItem: jest.fn(),
@@ -96,10 +95,8 @@ describe('SampleBooks', () => {
     it('should handle invalid JSON gracefully', () => {
       mockLocalStorage.getItem.mockReturnValue('invalid json');
       
-      // Should not throw error but we need to handle the try-catch properly
       const result = loadSampleData();
       
-      // Should still try to save since invalid JSON means no valid data
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
         'acervi_personal_library',
         JSON.stringify(sampleBooks)

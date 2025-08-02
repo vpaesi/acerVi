@@ -1,4 +1,4 @@
-import { PersonalBook, PersonalLibrary, BookFilters } from './personalLibrary';
+import { PersonalBook, PersonalLibrary, BookFilters } from '../types/personalLibrary';
 
 describe('PersonalLibrary Types', () => {
   it('should have valid PersonalBook interface', () => {

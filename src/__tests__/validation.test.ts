@@ -1,14 +1,9 @@
-// Testes para utilitários de formatação e validação
-
-// Utilitários de validação
 const ValidationUtils = {
   validateISBN: (isbn: string): boolean => {
     if (!isbn) return false;
     
-    // Remove hífens e espaços
     const cleanISBN = isbn.replace(/[-\s]/g, '');
     
-    // Verifica se tem 10 ou 13 dígitos
     if (!/^\d{10}$|^\d{13}$/.test(cleanISBN)) {
       return false;
     }
@@ -38,7 +33,6 @@ const ValidationUtils = {
   }
 };
 
-// Utilitários de formatação
 const FormatUtils = {
   formatDate: (dateString: string): string => {
     try {
@@ -85,7 +79,6 @@ const FormatUtils = {
   }
 };
 
-// Função auxiliar para validar ISBN-10
 function validateISBN10(isbn: string): boolean {
   let sum = 0;
   for (let i = 0; i < 9; i++) {
@@ -98,7 +91,6 @@ function validateISBN10(isbn: string): boolean {
   return checkDigit === (calculatedCheckDigit === 10 ? 'X' : calculatedCheckDigit.toString());
 }
 
-// Função auxiliar para validar ISBN-13
 function validateISBN13(isbn: string): boolean {
   let sum = 0;
   for (let i = 0; i < 12; i++) {
@@ -114,13 +106,11 @@ function validateISBN13(isbn: string): boolean {
 describe('Validation Utils', () => {
   describe('validateISBN', () => {
     it('should validate basic ISBN format', () => {
-      // Apenas testa formato, não matemática complexa
-      expect(ValidationUtils.validateISBN('1234567890')).toBe(false); // formato correto mas checksum errado
-      expect(ValidationUtils.validateISBN('1234567890123')).toBe(false); // formato correto mas checksum errado
+      expect(ValidationUtils.validateISBN('1234567890')).toBe(false);
+      expect(ValidationUtils.validateISBN('1234567890123')).toBe(false);
     });
 
     it('should handle ISBN with hyphens', () => {
-      // Remove hífens corretamente
       const result = ValidationUtils.validateISBN('12-34-56789-0');
       expect(typeof result).toBe('boolean');
     });
@@ -129,7 +119,7 @@ describe('Validation Utils', () => {
       expect(ValidationUtils.validateISBN('')).toBe(false);
       expect(ValidationUtils.validateISBN('123')).toBe(false);
       expect(ValidationUtils.validateISBN('abc')).toBe(false);
-      expect(ValidationUtils.validateISBN('123456789012345')).toBe(false); // muito longo
+      expect(ValidationUtils.validateISBN('123456789012345')).toBe(false);
     });
   });
 
@@ -185,7 +175,7 @@ describe('Format Utils', () => {
   describe('formatDate', () => {
     it('should format dates correctly', () => {
       const result = FormatUtils.formatDate('2024-01-15T10:30:00.000Z');
-      expect(result).toMatch(/\d{1,2}\/\d{1,2}\/\d{4}/); // DD/MM/YYYY format
+      expect(result).toMatch(/\d{1,2}\/\d{1,2}\/\d{4}/);
     });
 
     it('should handle invalid dates', () => {

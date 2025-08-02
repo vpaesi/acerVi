@@ -1,4 +1,4 @@
-import { Book, BookVolumeInfo, GoogleBooksResponse, BookSearchParams } from './book';
+import { Book, BookVolumeInfo, GoogleBooksResponse, BookSearchParams } from '../types/book';
 
 describe('Book Types', () => {
   it('should have valid Book interface', () => {

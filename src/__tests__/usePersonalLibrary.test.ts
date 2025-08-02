@@ -1,7 +1,5 @@
-// Testes básicos para funções auxiliares dos hooks
 import { PersonalBook } from '../types/personalLibrary';
 
-// Simular algumas funções que estão nos hooks
 const HookUtils = {
   calculateStats: (books: PersonalBook[]) => {
     const stats = {
@@ -18,13 +16,11 @@ const HookUtils = {
       readPages: 0
     };
 
-    // Calcular média de rating
     const ratedBooks = books.filter(book => book.rating);
     if (ratedBooks.length > 0) {
       stats.averageRating = ratedBooks.reduce((sum, book) => sum + (book.rating || 0), 0) / ratedBooks.length;
     }
 
-    // Calcular páginas
     stats.totalPages = books.reduce((sum, book) => sum + (book.pageCount || 0), 0);
     stats.readPages = books
       .filter(book => book.status === 'lido')
@@ -167,14 +163,14 @@ describe('Hook Utils - Funções Auxiliares', () => {
     it('should calculate average rating correctly', () => {
       const stats = HookUtils.calculateStats(mockBooks);
 
-      expect(stats.averageRating).toBe(4.5); // (5 + 4) / 2
+      expect(stats.averageRating).toBe(4.5);
     });
 
     it('should calculate page counts', () => {
       const stats = HookUtils.calculateStats(mockBooks);
 
-      expect(stats.totalPages).toBe(950); // 300 + 250 + 400
-      expect(stats.readPages).toBe(300); // apenas o livro lido
+      expect(stats.totalPages).toBe(950);
+      expect(stats.readPages).toBe(300);
     });
 
     it('should handle empty array', () => {

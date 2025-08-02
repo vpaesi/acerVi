@@ -1,4 +1,4 @@
-import { generateId } from './idUtils';
+import { generateId } from '../utils/idUtils';
 
 describe('idUtils', () => {
   describe('generateId', () => {
@@ -20,7 +20,6 @@ describe('idUtils', () => {
     it('should generate IDs with consistent format', () => {
       const id = generateId();
       
-      // Should contain timestamp part (base36) + random part
       expect(id.length).toBeGreaterThan(10);
       expect(/^[a-z0-9]+$/.test(id)).toBe(true);
     });

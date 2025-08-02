@@ -1,17 +1,21 @@
-// Testes para funções utilitárias do sistema CDU
-import { getCDUByCode, getCDUsByCategory, generateCutter, CDU_CLASSIFICATIONS } from './cduService';
+import { 
+  generateCutter, 
+  getPrimaryCategories, 
+  getSubcategoriesByPrimary,
+  getMainCategories,
+  getCDUByCode, 
+  getCDUsByCategory, 
+  CDU_CLASSIFICATIONS 
+} from '../services/cduService';
 
-// Utilitários adicionais para CDU
 const CduUtils = {
   validateCduCode: (code: string): boolean => {
     if (!code) return false;
-    // CDU deve ter pelo menos 1 dígito e até 10 dígitos com pontos e sublinhados
     return /^[0-9]([0-9.:\-/()]*[0-9])?$/.test(code) && code.length <= 20;
   },
 
   formatCduCode: (code: string): string => {
     if (!code) return '';
-    // Remove espaços extras e normaliza
     return code.trim().replace(/\s+/g, ' ');
   },
 
@@ -64,19 +68,16 @@ const CduUtils = {
   }
 };
 
-// Utilitários para códigos Cutter
 const CutterUtils = {
   generateCutterCode: (author: string): string => {
     if (!author) return '';
     
-    // Simplificado: primeira letra + número baseado na segunda letra
     const normalized = author.toLowerCase().replace(/[^a-z]/g, '');
     if (normalized.length === 0) return '';
     
     const firstLetter = normalized.charAt(0).toUpperCase();
     const secondChar = normalized.charAt(1) || 'a';
     
-    // Mapeamento simples para número
     const cutterNumber = Math.floor((secondChar.charCodeAt(0) - 97) / 2.6) + 1;
     
     return `${firstLetter}${cutterNumber.toString().padStart(2, '0')}`;
@@ -84,7 +85,6 @@ const CutterUtils = {
 
   validateCutterCode: (code: string): boolean => {
     if (!code) return false;
-    // Formato: Letra + 2-3 dígitos
     return /^[A-Z][0-9]{2,3}$/.test(code);
   },
 
@@ -107,12 +107,10 @@ const CutterUtils = {
   extractAuthorFromCutter: (code: string): string => {
     if (!CutterUtils.validateCutterCode(code)) return '';
     
-    // Retorna apenas a primeira letra (aproximação do sobrenome)
     return code.charAt(0);
   }
 };
 
-// Utilitários para números de chamada
 const CallNumberUtils = {
   generateCallNumber: (cdu: string, cutter: string): string => {
     if (!cdu) return '';
@@ -146,15 +144,132 @@ const CallNumberUtils = {
       const parsedA = CallNumberUtils.parseCallNumber(a);
       const parsedB = CallNumberUtils.parseCallNumber(b);
       
-      // Primeiro ordena por CDU
       const cduCompare = CduUtils.compareCduCodes(parsedA.cdu, parsedB.cdu);
       if (cduCompare !== 0) return cduCompare;
       
-      // Depois por Cutter
       return CutterUtils.compareCutterCodes(parsedA.cutter, parsedB.cutter);
     });
   }
 };
+
+describe('CDU Service', () => {
+  describe('generateCutter', () => {
+    it('should generate Cutter code from author surname', () => {
+      const result = generateCutter('José Silva', 'Test Title');
+      expect(result).toMatch(/^S\d+/);
+    });
+
+    it('should handle author with multiple names', () => {
+      const result = generateCutter('José Carlos da Silva Santos', 'Test Title');
+      expect(result).toMatch(/^S\d+/);
+    });
+
+    it('should handle empty author gracefully', () => {
+      const result = generateCutter('', 'Test Title');
+      expect(result).toMatch(/^T\d+/);
+    });
+
+    it('should handle both empty author and title', () => {
+      const result = generateCutter('', '');
+      expect(result).toBe('A001');
+    });
+
+    it('should normalize accented characters', () => {
+      const result = generateCutter('João Ção', 'Test Title');
+      expect(result).toMatch(/^C\d+/);
+    });
+  });
+
+  describe('getPrimaryCategories', () => {
+    it('should return all primary CDU categories (0-9)', () => {
+      const categories = getPrimaryCategories();
+      expect(categories).toHaveLength(10);
+      expect(categories[0].code).toBe('0');
+      expect(categories[9].code).toBe('9');
+    });
+
+    it('should have descriptions for all categories', () => {
+      const categories = getPrimaryCategories();
+      categories.forEach(category => {
+        expect(category.description).toBeTruthy();
+        expect(typeof category.description).toBe('string');
+      });
+    });
+  });
+
+  describe('getSubcategoriesByPrimary', () => {
+    it('should return subcategories for valid primary code', () => {
+      const subcategories = getSubcategoriesByPrimary('0');
+      expect(subcategories.length).toBeGreaterThan(0);
+      subcategories.forEach(sub => {
+        expect(sub.code.startsWith('0')).toBe(true);
+      });
+    });
+
+    it('should return empty array for invalid primary code', () => {
+      const subcategories = getSubcategoriesByPrimary('invalid');
+      expect(subcategories).toEqual([]);
+    });
+
+    it('should return subcategories for all valid primary codes', () => {
+      for (let i = 0; i <= 9; i++) {
+        const subcategories = getSubcategoriesByPrimary(i.toString());
+        expect(subcategories.length).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  describe('getMainCategories', () => {
+    it('should return main categories for filtering', () => {
+      const categories = getMainCategories();
+      expect(categories.length).toBeGreaterThan(0);
+    });
+
+    it('should have code and description properties', () => {
+      const categories = getMainCategories();
+      categories.forEach(category => {
+        expect(category).toHaveProperty('code');
+        expect(category).toHaveProperty('description');
+        expect(typeof category.code).toBe('string');
+        expect(typeof category.description).toBe('string');
+      });
+    });
+  });
+
+  describe('Service Integration', () => {
+    it('should integrate with CDU service for category mapping', () => {
+      const categories = getCDUsByCategory('0');
+      
+      expect(categories).toBeDefined();
+      expect(Array.isArray(categories)).toBe(true);
+      
+      categories.forEach(cat => {
+        expect(cat.code).toBeDefined();
+        expect(CduUtils.validateCduCode(cat.code)).toBe(true);
+      });
+    });
+
+    it('should find CDU classifications by code', () => {
+      const classification = getCDUByCode('004');
+      expect(classification).toBeDefined();
+      
+      if (classification) {
+        expect(classification.code).toBe('004');
+        expect(classification.description).toBeDefined();
+      }
+    });
+
+    it('should access CDU classifications data', () => {
+      expect(CDU_CLASSIFICATIONS).toBeDefined();
+      expect(Array.isArray(CDU_CLASSIFICATIONS)).toBe(true);
+      expect(CDU_CLASSIFICATIONS.length).toBeGreaterThan(0);
+      
+      const firstItem = CDU_CLASSIFICATIONS[0];
+      expect(firstItem).toHaveProperty('code');
+      expect(firstItem).toHaveProperty('description');
+    });
+  });
+});
 
 describe('CDU Utils - Validação e Formatação', () => {
   describe('validateCduCode', () => {
@@ -167,7 +282,7 @@ describe('CDU Utils - Validação e Formatação', () => {
     it('should reject invalid CDU codes', () => {
       expect(CduUtils.validateCduCode('')).toBe(false);
       expect(CduUtils.validateCduCode('abc')).toBe(false);
-      expect(CduUtils.validateCduCode('123456789012345678901')).toBe(false); // muito longo
+      expect(CduUtils.validateCduCode('123456789012345678901')).toBe(false);
     });
   });
 
@@ -241,9 +356,9 @@ describe('Cutter Utils - Códigos de Autor', () => {
 
     it('should reject invalid Cutter codes', () => {
       expect(CutterUtils.validateCutterCode('')).toBe(false);
-      expect(CutterUtils.validateCutterCode('s55')).toBe(false); // minúscula
-      expect(CutterUtils.validateCutterCode('S5')).toBe(false); // muito curto
-      expect(CutterUtils.validateCutterCode('S5555')).toBe(false); // muito longo
+      expect(CutterUtils.validateCutterCode('s55')).toBe(false);
+      expect(CutterUtils.validateCutterCode('S5')).toBe(false);
+      expect(CutterUtils.validateCutterCode('S5555')).toBe(false);
     });
   });
 
@@ -321,10 +436,8 @@ describe('Call Number Utils - Números de Chamada', () => {
       const callNumbers = ['100 A10', '004.42 S55', '100 A05', '050 M20'];
       const sorted = CallNumberUtils.sortCallNumbers(callNumbers);
       
-      // Verificar que está ordenado corretamente
       expect(sorted).toHaveLength(4);
       
-      // Verificar ordem específica baseada na lógica CDU
       const first = CallNumberUtils.parseCallNumber(sorted[0]);
       const second = CallNumberUtils.parseCallNumber(sorted[1]);
       
@@ -335,48 +448,5 @@ describe('Call Number Utils - Números de Chamada', () => {
     it('should handle empty array', () => {
       expect(CallNumberUtils.sortCallNumbers([])).toEqual([]);
     });
-  });
-});
-
-describe('CDU Service Integration', () => {
-  it('should integrate with CDU service for category mapping', () => {
-    // Teste do serviço CDU existente
-    const categories = getCDUsByCategory('0');
-    
-    expect(categories).toBeDefined();
-    expect(Array.isArray(categories)).toBe(true);
-    
-    categories.forEach(cat => {
-      expect(cat.code).toBeDefined();
-      expect(CduUtils.validateCduCode(cat.code)).toBe(true);
-    });
-  });
-
-  it('should handle generate cutter codes', () => {
-    const cutterCode = generateCutter('Silva', 'Test Book');
-    expect(cutterCode).toBeDefined();
-    expect(typeof cutterCode).toBe('string');
-    expect(cutterCode.length).toBeGreaterThan(0);
-  });
-
-  it('should find CDU classifications by code', () => {
-    const classification = getCDUByCode('004');
-    expect(classification).toBeDefined();
-    
-    if (classification) {
-      expect(classification.code).toBe('004');
-      expect(classification.description).toBeDefined();
-    }
-  });
-
-  it('should access CDU classifications data', () => {
-    expect(CDU_CLASSIFICATIONS).toBeDefined();
-    expect(Array.isArray(CDU_CLASSIFICATIONS)).toBe(true);
-    expect(CDU_CLASSIFICATIONS.length).toBeGreaterThan(0);
-    
-    // Verificar estrutura dos dados
-    const firstItem = CDU_CLASSIFICATIONS[0];
-    expect(firstItem).toHaveProperty('code');
-    expect(firstItem).toHaveProperty('description');
   });
 });

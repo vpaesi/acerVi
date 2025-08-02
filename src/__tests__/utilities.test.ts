@@ -1,5 +1,3 @@
-// Testes para funções de formatação e helpers
-
 describe('Date Utilities', () => {
   const DateUtils = {
     formatRelativeTime: (date: Date): string => {
@@ -50,15 +48,7 @@ describe('Date Utilities', () => {
   describe('addDays and getDaysBetween', () => {
     it('should add days correctly', () => {
       const date = new Date('2023-01-01');
-      const newDate = DateUtils.addDays(date, 5);
-      
-      // Debugging: vamos ver qual é a data resultante
-      console.log('Original date:', date.toISOString());
-      console.log('New date:', newDate.toISOString());
-      console.log('Original day:', date.getDate());
-      console.log('New day:', newDate.getDate());
-      
-      // A data original é 1 de janeiro, adicionando 5 dias deveria resultar em 6 de janeiro
+      const newDate = DateUtils.addDays(date, 5);      
       const expectedDate = new Date('2023-01-06');
       expect(newDate.getTime()).toBe(expectedDate.getTime());
     });

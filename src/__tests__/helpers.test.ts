@@ -1,4 +1,3 @@
-// Testes para constantes e configurações
 describe('Application Constants', () => {
   it('should have consistent application name', () => {
     const APP_NAME = 'AcerVi';
@@ -46,7 +45,6 @@ describe('Application Constants', () => {
   });
 });
 
-// Testes para utilitários de URL
 const URLUtils = {
   buildGoogleBooksUrl: (query: string, maxResults = 10) => {
     const baseUrl = 'https://www.googleapis.com/books/v1/volumes';
@@ -129,7 +127,6 @@ describe('URL Utils', () => {
   });
 });
 
-// Testes para utilitários de array
 const ArrayUtils = {
   removeDuplicates: <T>(array: T[]): T[] => {
     return [...new Set(array)];

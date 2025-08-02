@@ -1,8 +1,6 @@
-// Testes simples para App.tsx
-import App from './App';
+import App from '../App';
 
-// Mock do componente Home para evitar dependências complexas
-jest.mock('./pages/Home', () => {
+jest.mock('../pages/Home', () => {
   return function MockHome() {
     return 'Mocked Home Component';
   };
@@ -19,14 +17,17 @@ describe('App Component', () => {
   });
 
   it('should be a React functional component', () => {
-    // Testa se é uma função que pode ser um componente React
     const component = App;
     expect(typeof component).toBe('function');
-    expect(component.length).toBe(0); // FC não recebe argumentos além de props
+    expect(component.length).toBe(0);
   });
 
   it('should have default export', () => {
-    // Testa se o export default funciona
     expect(App).toBeTruthy();
+  });
+
+  it('should be importable as default export', () => {
+    expect(App).not.toBeNull();
+    expect(App).not.toBeUndefined();
   });
 });

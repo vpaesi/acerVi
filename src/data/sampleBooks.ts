@@ -120,7 +120,6 @@ export const loadSampleData = () => {
     }
     return false;
   } catch {
-    // Se houver erro (JSON inválido), carrega dados de exemplo
     localStorage.setItem('acervi_personal_library', JSON.stringify(sampleBooks));
     return true;
   }

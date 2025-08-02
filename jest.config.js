@@ -3,12 +3,10 @@ export default {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   
-  // Transform configuration  
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {}],
   },
   
-  // Module name mapping para CSS e aliases
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^@/(.*)$': '<rootDir>/src/$1',
