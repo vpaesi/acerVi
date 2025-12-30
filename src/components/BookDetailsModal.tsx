@@ -131,7 +131,7 @@ export const BookDetailsModal: React.FC<BookDetailsModalProps> = ({
               {/* MARC21 001 - Número de Controle */}
               <div className="marc-field">
                 <span className="marc-tag">001</span>
-                <span className="marc-content">{book.id}</span>
+                <span className="marc-content">{book.controlNumber ?? book.id}</span>
                 <span className="marc-description">Número de controle</span>
               </div>
 

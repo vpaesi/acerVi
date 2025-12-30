@@ -1,4 +1,5 @@
 export interface PersonalBook {
+  controlNumber?: string;
   id: string;
   title: string;
   authors: string[];
