@@ -74,11 +74,13 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
         })
         .join(",")
     );
-    const csv = [headers.join(","), ...rows].join("\r\n");
+    const headerRow = headers.map((h) => sanitizeForCsv(h)).join(",");
+    const csv = [headerRow, ...rows].join("\r\n");
     const blob = new Blob(["\uFEFF" + csv], {
       type: "text/csv;charset=utf-8;",
     });
-    downloadBlob(blob, "books.csv");
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    downloadBlob(blob, `books-${ts}.csv`);
   };
 
   const exportXLSX = async () => {
@@ -101,9 +103,10 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
       const ws = XLSX.utils.json_to_sheet(normalized, { header: headers });
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Books");
-      XLSX.writeFile(wb, "books.xlsx");
-    } catch {
-      // fallback para CSV se xlsx não estiver disponível
+      const ts = new Date().toISOString().replace(/[:.]/g, "-");
+      XLSX.writeFile(wb, `books-${ts}.xlsx`);
+    } catch (error) {
+      console.error("Falha ao gerar XLSX. Usando fallback para CSV.", error);
       exportCSV();
     }
   };
@@ -117,7 +120,7 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
       const { jsPDF } = (await import("jspdf")) as typeof import("jspdf");
       const doc = new jsPDF();
       let y = 10;
-      const pageHeight = 285;
+      const pageHeight = doc.internal.pageSize.getHeight();
       books.forEach((b, idx) => {
         const authors = Array.isArray(b.authors)
           ? b.authors.join(", ")
@@ -133,8 +136,10 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
           y = 10;
         }
       });
-      doc.save("books.pdf");
-    } catch {
+      const ts = new Date().toISOString().replace(/[:.]/g, "-");
+      doc.save(`books-${ts}.pdf`);
+    } catch (error) {
+      console.error('Falha ao gerar PDF. Certifique-se de que "jspdf" está instalado.', error);
       createToast('Não foi possível gerar PDF. Instale "jspdf" para suporte ao PDF.');
     }
   };
