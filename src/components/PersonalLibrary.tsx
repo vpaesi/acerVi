@@ -11,6 +11,7 @@ import { loadSampleData } from '../data/sampleBooks';
 import { getMainCategories } from '../services/cduService';
 import { formatStatus } from '../utils/formatStatus';
 import './PersonalLibrarySidebar.css';
+import ReportButtons from './ReportButtons';
 
 export const PersonalLibrary: React.FC = () => {
   const {
@@ -276,6 +277,10 @@ export const PersonalLibrary: React.FC = () => {
               </button>
             )}
           </section>
+
+          <div>
+            <ReportButtons books={books} />
+          </div>
         </div>
       </aside>
 

@@ -287,12 +287,12 @@
   font-weight: 500;
 }
 
-.add-book-button {
+.add-book-button, .export-collection  {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
 }
 
-.add-book-button:hover {
+.add-book-button:hover, .export-collection:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
@@ -524,6 +524,31 @@
 
 .add-first-book:hover {
   transform: translateY(-2px);
+}
+
+.report-buttons {
+  padding: 10px 0 20px 0;
+}
+
+.report-title {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.report-buttons-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.export-collection {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  font-size: 16px;
 }
 
 @media (max-width: 768px) {
