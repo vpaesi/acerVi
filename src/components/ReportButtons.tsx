@@ -1,40 +1,80 @@
+import { useMemo } from "react";
 import { PersonalBook } from "../types/personalLibrary";
 
 type ReportButtonsProps = {
   books: PersonalBook[];
 };
 
+const createToast = (message: string) => {
+  const id = `toast-${Date.now()}`;
+  const el = document.createElement("div");
+  el.id = id;
+  el.textContent = message;
+  Object.assign(el.style, {
+    position: "fixed",
+    right: "16px",
+    bottom: "16px",
+    background: "rgba(0,0,0,0.8)",
+    color: "white",
+    padding: "10px 14px",
+    borderRadius: "8px",
+    zIndex: "9999",
+    fontSize: "14px",
+  });
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.remove();
+  }, 3000);
+};
+
 const downloadBlob = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
+  a.style.display = "none";
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  // ensure download triggered before cleanup
+  setTimeout(() => {
+    a.remove();
+    URL.revokeObjectURL(url);
+  }, 0);
 };
 
 export default function ReportButtons({ books }: ReportButtonsProps) {
+  const headers = useMemo(
+    () =>
+      books && books.length > 0
+        ? Array.from(new Set(books.flatMap((b) => Object.keys(b))))
+        : [],
+    [books]
+  );
+
+  const sanitizeForCsv = (value: unknown) => {
+    if (value === null || value === undefined) return "";
+    let s = Array.isArray(value) ? value.join("; ") : String(value);
+    // prevent CSV injection: prefix = + - @ with a single quote
+    if (s.length > 0 && ["=", "+", "-", "@"].includes(s[0])) s = `'${s}`;
+    // escape double quotes
+    s = s.replace(/"/g, '""');
+    return `"${s}"`;
+  };
+
   const exportCSV = () => {
     if (!books || books.length === 0) {
-      alert("Nenhum livro para exportar");
+      createToast("Nenhum livro para exportar");
       return;
     }
-    // headers: união de todas as chaves presentes nos livros
-    const headers = Array.from(new Set(books.flatMap((b) => Object.keys(b))));
     const rows = books.map((b) =>
       headers
         .map((h) => {
           const v = b[h as keyof PersonalBook];
-          if (Array.isArray(v)) return `"${v.join("; ")}"`;
-          if (v === null || v === undefined) return "";
-          return `"${String(v).replace(/"/g, '""')}"`;
+          return sanitizeForCsv(v);
         })
         .join(",")
     );
     const csv = [headers.join(","), ...rows].join("\r\n");
-    // BOM para Excel
     const blob = new Blob(["\uFEFF" + csv], {
       type: "text/csv;charset=utf-8;",
     });
@@ -43,13 +83,11 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
 
   const exportXLSX = async () => {
     if (!books || books.length === 0) {
-      alert("Nenhum livro para exportar");
+      createToast("Nenhum livro para exportar");
       return;
     }
     try {
       const XLSX: typeof import("xlsx") = await import("xlsx");
-      // normalizar dados: arrays -> string
-      const headers = Array.from(new Set(books.flatMap((b) => Object.keys(b))));
       const normalized = books.map((b) => {
         const obj: Record<string, unknown> = {};
         headers.forEach((h) => {
@@ -72,7 +110,7 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
 
   const exportPDF = async () => {
     if (!books || books.length === 0) {
-      alert("Nenhum livro para exportar");
+      createToast("Nenhum livro para exportar");
       return;
     }
     try {
@@ -97,7 +135,7 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
       });
       doc.save("books.pdf");
     } catch {
-      alert('Não foi possível gerar PDF. Instale "jspdf" para suporte ao PDF.');
+      createToast('Não foi possível gerar PDF. Instale "jspdf" para suporte ao PDF.');
     }
   };
 
