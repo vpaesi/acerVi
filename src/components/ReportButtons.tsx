@@ -105,13 +105,28 @@ export default function ReportButtons({ books }: ReportButtonsProps) {
     <div className="report-buttons">
       <p className="report-title">Exportar coleção:</p>
       <div className="report-buttons-row">
-        <button type="button" onClick={exportXLSX} className="export-collection">
+        <button
+          type="button"
+          onClick={exportXLSX}
+          className="add-book-button export-collection"
+          aria-label="Exportar coleção como arquivo Excel"
+        >
           Excel
         </button>
-        <button type="button" onClick={exportCSV} className="export-collection">
+        <button
+          type="button"
+          onClick={exportCSV}
+          className="add-book-button export-collection"
+          aria-label="Exportar coleção como arquivo CSV"
+        >
           CSV
         </button>
-        <button type="button" onClick={exportPDF} className="export-collection">
+        <button
+          type="button"
+          onClick={exportPDF}
+          className="add-book-button export-collection"
+          aria-label="Exportar coleção como arquivo PDF"
+        >
           PDF
         </button>
       </div>
